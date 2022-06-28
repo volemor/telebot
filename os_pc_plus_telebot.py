@@ -2,6 +2,7 @@
 telegramm bot для мониторинга работы orange pi pc plus
 
 смотрил логи бинанс ботов, ...
+jr
 
 '''
 import os, time, datetime
