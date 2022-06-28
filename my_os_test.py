@@ -151,6 +151,22 @@ def update_modul(message):
         bot.send_message(message.chat.id, 'дополнительные модули не найдены')
 
 
+@bot.message_handler(commands=['binance_log'])
+def bin_log(message):
+    if check_for_access(message.from_user.id):
+        sql_login = 'mysql+pymysql://binanse:binanse_pass@192.168.0.118/binance'
+        db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
+        sql_message= 'select * from hist_data'
+        df = pd.read_sql(sql_message, con = db_connection)
+        new_mes = "[7] последних записей в базе данных:\n"
+        mes = df['date_time'].tail(7).to_list()
+        for item in mes:
+            new_mes += ''.join(item)
+            new_mes += ''.join('\n')
+        bot.send_message(message.chat.id, new_mes)
+    else:
+        bot.send_message(message.chat.id, 'дополнительные модули не найдены')
+
 @bot.message_handler(commands=['tiker_report_status'])
 def user_info(message):
     # save_user_info(message)
