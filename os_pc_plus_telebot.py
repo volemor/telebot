@@ -45,7 +45,7 @@ def bin_bot_deal_log_list(message):
                 # print(data_l)
                 m = [1, 2, -3, -2, -1]
                 for i in m:
-                    new_data += data_l[i]
+                    new_data += data_l[i] + ' '
             else:
                 new_data += data_l[0]
             new_data += '\n'
