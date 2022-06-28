@@ -23,11 +23,11 @@ db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 import pandas as pd
 
 if os.name == 'nt':  # проверяем из под чего загрузка.
-    proj_path = 'W:\My_Python\st_US'
+    proj_path = 'W:\\My_Python\\stock_update'
     print("start from WINDOWS")
     exit()
 else:
-    proj_path = '/mnt/1T/opt/gig/My_Python/st_US/'
+    proj_path = '/mnt/1T/opt/gig/My_Python/stock_update/'
     print("start from LINUX")
 
 me = singleton.SingleInstance()  ### проверка на работу и запуск альтернативной версии скрипта - чтоб не задвоялась
