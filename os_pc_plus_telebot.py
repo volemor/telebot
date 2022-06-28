@@ -29,7 +29,7 @@ def check_accesss(name):
 @bot.message_handler(commands=['b1'])
 def bin_bot_log_list(message):
     if check_accesss(message.from_user.id):
-        bot.send_message(message.chat.id, os.popen('tail -10 /root/binance_b1/bot_1.log').read())
+        bot.send_message(message.chat.id, os.popen('tail -10 /root/binance_main/bot_1.log').read())
     else:
         bot.send_message(message.chat.id, 'not found')
 
@@ -38,7 +38,7 @@ def bin_bot_log_list(message):
 def bin_bot_deal_log_list(message):
     if check_accesss(message.from_user.id):
         mes_data = ''
-        for line in os.popen('tail -10 /root/binance_b1/bot_1_deal_log.json').read().split('\n'):
+        for line in os.popen('tail -10 /root/binance_main/bot_1_deal_log.json').read().split('\n'):
             data_l = line.split(',')
             new_data = ''
             if len(data_l) > 2:
@@ -81,4 +81,4 @@ while True:
         bot.polling(none_stop=True)
     except Exception as _ex:
         print(_ex)
-        time.sleep(10)
+        time.sleep(20)
