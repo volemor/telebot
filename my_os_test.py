@@ -190,7 +190,7 @@ def user_info(message):
 
 @bot.message_handler(commands=['allrestart'])
 def allrestart(message):
-    if check_accesss(message.from_user.id):
+    if check_for_access(message.from_user.id):
         kill_line = ''
         for line in os.popen('ps -axf|grep .py').read().split('\n'):
             if 'my_os_test.py' in line:
