@@ -189,7 +189,7 @@ def user_info(message):
         bot.send_message(message.chat.id, 'нет инфы')
 
 @bot.message_handler(commands=['allrestart'])
-def start(message):
+def allrestart(message):
     if check_accesss(message.from_user.id):
         kill_line = ''
         for line in os.popen('ps -axf|grep .py').read().split('\n'):
