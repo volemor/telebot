@@ -78,9 +78,10 @@ def start(message):
 @bot.message_handler(commands=['start_binbot1'])
 def start(message):
     if check_accesss(message.from_user.id):
+        kill_line = ''
         for line in os.popen('ps -axf|grep .py').read().split('\n'):
-            kill_line = ''
             if 'bin_bot1.py' in line or 'os_pc_plus_telebot.py' in line:
+                print(line.split()[0])
                 kill_line += line.split()[0] + ' '
         print('kill_line:', kill_line)
         bot.send_message(message.chat.id, f'old process [{kill_line}] killed, make git pull and start new')
