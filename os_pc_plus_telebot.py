@@ -14,6 +14,7 @@ from os_pi_plus_secure import *
 import pandas as pd
 
 me = singleton.SingleInstance()
+time.sleep(2)
 
 bot = telebot.TeleBot(secret_bot_token)
 print("start Ok")
@@ -85,7 +86,7 @@ def start(message):
                 kill_line += line.split()[0] + ' '
         print('kill_line:', kill_line)
         bot.send_message(message.chat.id, f'old process [{kill_line}] killed, make git pull and start new')
-        os.popen(f'kill {kill_line} && nohup /root/bot1_start.bat & echo ok').read()
+        os.popen(f'nohup /root/bot1_start.bat && kill {kill_line} && echo ok').read()
         # if 'bin_bot1.py' not in os.popen("ps -axf").read():
         #     os.popen('/root/bot1_start.bat').read()
         # for index in os.popen("ps -axf").read().split('\n'):
