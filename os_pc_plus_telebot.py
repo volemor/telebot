@@ -82,6 +82,7 @@ def start(message):
             kill_line = ''
             if 'bin_bot1.py' in line or 'os_pc_plus_telebot.py' in line:
                 kill_line += line.split()[0] + ' '
+        print('kill_line:', kill_line)
         bot.send_message(message.chat.id, f'old process [{kill_line}] killed, make git pull and start new')
         os.popen(f'kill {kill_line} && /root/bot1_start.bat').read()
         # if 'bin_bot1.py' not in os.popen("ps -axf").read():
