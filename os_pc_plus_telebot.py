@@ -74,6 +74,20 @@ def start(message):
     print('start')
     bot.send_message(message.chat.id, 'test complete')
 
+@bot.message_handler(commands=['start_binbot1'])
+def start(message):
+    if check_accesss(message.from_user.id):
+        for line in os.popen('ps -axf|grep .py').read().split('\n'):
+            if 'bin_bot1.py' in line:
+                line_s = line.split()
+                os.popen(f'kill {line_s[0]}').read()
+        if 'bin_bot1.py' not in os.popen("ps -axf").read():
+            os.popen('/root/bot1_start.bat').read()
+        for index in os.popen("ps -axf").read().split('\n'):
+            if 'bin_bot1.py' in index:
+                pid = index.split()[0]
+        bot.send_message(message.chat.id, f'old process [{line_s}] killed, make git pull and start new [{pid}]')
+    # bot.send_message(message.chat.id, 'test complete')
 
 while True:
     try:
