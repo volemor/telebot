@@ -34,16 +34,18 @@ def bin_bot_log_list(message):
     else:
         bot.send_message(message.chat.id, 'not found')
 
+
 @bot.message_handler(commands=['b1_ex'])
 def bin_bot_Exception_log_list(message):
     if check_accesss(message.from_user.id):
         log = os.popen('tail -10 /root/binance_main/ext_log.log').read()
-        if len (log) >0:
+        if len(log) > 0:
             bot.send_message(message.chat.id, log)
         else:
-            bot.send_message(message.chat.id,'No line in log')
+            bot.send_message(message.chat.id, 'No line in log')
     else:
         bot.send_message(message.chat.id, 'not found')
+
 
 @bot.message_handler(commands=['b1_json'])
 def bin_bot_deal_log_list(message):
