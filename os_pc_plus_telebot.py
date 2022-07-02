@@ -38,7 +38,9 @@ def bin_bot_log_list(message):
 @bot.message_handler(commands=['b1_ex'])
 def bin_bot_Exception_log_list(message):
     if check_accesss(message.from_user.id):
+        print(os.listdir('/root/binance_main/'))
         if 'ext_log.log' in os.listdir('/root/binance_main/'):
+
             log = os.popen('tail -10 /root/binance_main/ext_log.log').read()
             if len(log) > 0:
                 bot.send_message(message.chat.id, log)
