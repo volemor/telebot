@@ -92,6 +92,10 @@ def start(message):
     print('start')
     bot.send_message(message.chat.id, 'test complete')
 
+@bot.message_handler(commands=['kill'])
+def test_subcom(message):
+    spl= message.text.split()
+    bot.send_message(message.chat.id, spl)
 
 @bot.message_handler(commands=['allrestart'])
 def allrestart(message):
