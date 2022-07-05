@@ -95,7 +95,7 @@ def start(message):
 @bot.message_handler(commands=['kill'])
 def test_subcom(message):
     spl= message.text.split()
-    bot.send_message(message.chat.id, spl)
+    bot.send_message(message.chat.id, spl[1])
 
 @bot.message_handler(commands=['allrestart'])
 def allrestart(message):
