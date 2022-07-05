@@ -93,6 +93,7 @@ def start(message):
     bot.send_message(message.chat.id, 'test complete')
 
 @bot.message_handler(commands=['kill'])
+'''if input kill 123 -> print 123 '''
 def test_subcom(message):
     spl= message.text.split()
     bot.send_message(message.chat.id, spl[1])
