@@ -100,6 +100,13 @@ def test_subcom(message):
     bot.send_message(message.chat.id, spl[1])
 
 
+@bot.message_handler(commands=['sendmefile'])
+def sendmefile(message):
+    '''send any file'''
+    with open('ext_log.log', 'rb') as file
+        bot.send_document(message.chat.id, file)
+
+
 @bot.message_handler(commands=['allrestart'])
 def allrestart(message):
     if check_accesss(message.from_user.id):
