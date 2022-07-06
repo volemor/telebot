@@ -103,7 +103,7 @@ def test_subcom(message):
 @bot.message_handler(commands=['sendmefile'])
 def sendmefile(message):
     '''send any file'''
-    with open('ext_log.log', 'rb') as file:
+    with open('/root/binance_main/ext_log.log', 'rb') as file:
         bot.send_document(message.chat.id, file)
 
 
