@@ -233,7 +233,6 @@ def sendmefile(message):
     else:
         bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
         from my_os_test_config import subscriber_list
-        sendmefile(message)
 
 while True:
     try:
