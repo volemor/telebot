@@ -220,8 +220,8 @@ def sendmefile(message):
                 sender('all')
             elif 'd' in spl[1]:
                 sender('d')
-            else:
-                bot.send_message(message.chat.id, 'может добавить ключик..?')
+        else:
+            bot.send_message(message.chat.id, 'может добавить ключик..?')
     else:
         bot.send_message(message.chat.id, 'Пожалуй тебя нет в списках..')
 
