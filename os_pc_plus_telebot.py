@@ -100,11 +100,15 @@ def test_subcom(message):
     bot.send_message(message.chat.id, spl[1])
 
 
-@bot.message_handler(commands=['sendmefile'])
-def sendmefile(message):
-    '''send any file'''
-    with open('/root/binance_main/ext_log.log', 'rb') as file:
-        bot.send_document(message.chat.id, file)
+# @bot.message_handler(commands=['sendmefile'])
+# def sendmefile(message):
+#     '''send any file'''
+#     file_name = 'ext_log.log'
+#     if file_name in os.listdir('/root/binance_main/otchet'):
+#
+#         with open('/root/binance_main/ext_log.log', 'rb') as file:
+#             bot.send_document(message.chat.id, file)
+
 
 
 @bot.message_handler(commands=['allrestart'])
