@@ -16,7 +16,7 @@ from tendo import singleton
 import time
 import datetime
 from sqlalchemy import create_engine
-from my_os_test_config import * 
+from my_os_test_config import *
 
 sql_login = 'mysql+pymysql://python:python@192.168.0.118/hist_data'
 db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
@@ -32,7 +32,6 @@ else:
 
 me = singleton.SingleInstance()  ### проверка на работу и запуск альтернативной версии скрипта - чтоб не задвоялась
 
-
 processoutput = os.popen("ps -axf").read()
 my_list = processoutput.split('\n')
 count_my_prog = 0
@@ -44,8 +43,6 @@ for index in my_list:
         if count_my_prog == 2:
             print('pogramm allready run!!!')
             exit()
-
-
 
 
 def my_monitor():
@@ -156,8 +153,8 @@ def bin_log(message):
     if check_for_access(message.from_user.id):
         sql_login = 'mysql+pymysql://binanse:binanse_pass@192.168.0.118/binance'
         db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
-        sql_message= 'select * from hist_data'
-        df = pd.read_sql(sql_message, con = db_connection)
+        sql_message = 'select * from hist_data'
+        df = pd.read_sql(sql_message, con=db_connection)
         new_mes = "[7] последних записей в базе данных:\n"
         mes = df['date_time'].tail(7).to_list()
         for item in mes:
@@ -166,6 +163,7 @@ def bin_log(message):
         bot.send_message(message.chat.id, new_mes)
     else:
         bot.send_message(message.chat.id, 'дополнительные модули не найдены')
+
 
 @bot.message_handler(commands=['tiker_report_status'])
 def user_info(message):
@@ -180,13 +178,14 @@ def user_info(message):
             statistik_list['max_day_close'].sort()
             # my_mes += ''.join([f'len max_day_close [{len(statistik_list[1])}]\n'])
             my_mes += ''.join([
-                                  f"[{market}][{statistik_list.iat[1][-2]}][{len(df[(df['max_day_close'] == statistik_list.iat[1][-2]) & (df['market'] == market)]['tiker'])}]\n"])
+                f"[{market}][{statistik_list.iat[1][-2]}][{len(df[(df['max_day_close'] == statistik_list.iat[1][-2]) & (df['market'] == market)]['tiker'])}]\n"])
             my_mes += ''.join([
-                                  f"[{market}][{statistik_list.iat[1][-1]}][{len(df[(df['max_day_close'] == statistik_list.iat[1][-1]) & (df['market'] == market)]['tiker'])}]\n"])
+                f"[{market}][{statistik_list.iat[1][-1]}][{len(df[(df['max_day_close'] == statistik_list.iat[1][-1]) & (df['market'] == market)]['tiker'])}]\n"])
 
         bot.send_message(message.chat.id, my_mes)
     else:
         bot.send_message(message.chat.id, 'нет инфы')
+
 
 @bot.message_handler(commands=['allrestart'])
 def allrestart(message):
@@ -199,6 +198,17 @@ def allrestart(message):
         print('kill_line:', kill_line)
         bot.send_message(message.chat.id, f'old process [{kill_line}] killed, make git pull and start new')
         os.popen(f'nohup /root/mytelebot_start.bat && kill {kill_line}').read()
+
+
+@bot.message_handler(commands=['sendmefile'])
+def sendmefile(message):
+    '''send any file'''
+    path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
+    if check_for_access(message.from_user.id):
+        dir_list = os.listdir(path_for_telebot)
+        otchet_all = [name for name in dir_list if 'all' in name]
+        with open(path_for_telebot + otchet_all[-1], 'rb') as file:
+            bot.send_document(message.chat.id, file)
 
 
 while True:
