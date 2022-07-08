@@ -212,6 +212,8 @@ def sendmefile(message):
         if len(otchet_all) > 0:
             with open(path_for_telebot + otchet_all[-1], 'rb') as file:
                 bot.send_document(message.chat.id, file)
+        else:
+            bot.send_message(message.chat.id, 'file not found.. sorry')
 
     if check_for_access(message.from_user.id):
         spl = message.text.split()
