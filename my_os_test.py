@@ -83,13 +83,14 @@ bot = telebot.TeleBot(telegramm_token)
 """ бот для запуска на линуксе и мониторинге """
 
 
-def check_for_access(name:str):
+def check_for_access(name: str):
     if str(name) in my_access_list:
         return True
     else:
         return False
 
-def check_for_subscriber_list(name:str):
+
+def check_for_subscriber_list(name: str):
     if str(name) in subscriber_list:
         return True
     else:
@@ -180,7 +181,6 @@ def user_info(message):
     if check_for_access(message.from_user.id):
         sql_message = 'Select tiker, max(day_close) as max_day_close, market from tiker_report group by tiker;'
         df = pd.read_sql(sql_message, con=db_connection)
-
         for market in df['market'].unique():
             statistik_list = pd.Series({c: df[df['market'] == market][c].unique() for c in df})
             statistik_list['max_day_close'].sort()
@@ -211,6 +211,7 @@ def allrestart(message):
 @bot.message_handler(commands=['sendmefile'])
 def sendmefile(message):
     '''send any file'''
+
     def sender(key: str):
         path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
         dir_list = os.listdir(path_for_telebot)
@@ -221,6 +222,7 @@ def sendmefile(message):
                 bot.send_document(message.chat.id, file)
         else:
             bot.send_message(message.chat.id, 'file not found.. sorry')
+
     if check_for_subscriber_list(message.from_user.id):
         spl = message.text.split()
         if len(spl) > 1:
@@ -233,6 +235,7 @@ def sendmefile(message):
     else:
         bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
         from my_os_test_config import subscriber_list
+
 
 while True:
     try:
