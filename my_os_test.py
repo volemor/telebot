@@ -203,14 +203,23 @@ def allrestart(message):
 @bot.message_handler(commands=['sendmefile'])
 def sendmefile(message):
     '''send any file'''
-    path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
-    if check_for_access(message.from_user.id):
+
+    def sender(key: str):
+        path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
         dir_list = os.listdir(path_for_telebot)
-        otchet_all = [name for name in dir_list if 'all' in name]
+        otchet_all = [name for name in dir_list if key in name]
         otchet_all.sort()
         if len(otchet_all) > 0:
             with open(path_for_telebot + otchet_all[-1], 'rb') as file:
                 bot.send_document(message.chat.id, file)
+
+    if check_for_access(message.from_user.id):
+        spl = message.text.split()
+        if len(spl) > 1:
+            if 'all' in spl[1]:
+                sender('all')
+            if 'd' in spl[1]:
+                sender('d')
 
 
 while True:
