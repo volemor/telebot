@@ -8,6 +8,8 @@ netstat - netstat 22 port
 info - user info
 bot_modul_update - подгрузка модулей
 tiker_report_status - report_status
+allrestart - old process killed, make git pull and start new
+sendmefile * - send file
 """
 
 import os
@@ -209,7 +211,6 @@ def allrestart(message):
 @bot.message_handler(commands=['sendmefile'])
 def sendmefile(message):
     '''send any file'''
-
     def sender(key: str):
         path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
         dir_list = os.listdir(path_for_telebot)
@@ -220,7 +221,6 @@ def sendmefile(message):
                 bot.send_document(message.chat.id, file)
         else:
             bot.send_message(message.chat.id, 'file not found.. sorry')
-
     if check_for_subscriber_list(message.from_user.id):
         spl = message.text.split()
         if len(spl) > 1:
