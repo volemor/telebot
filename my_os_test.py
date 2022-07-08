@@ -207,6 +207,7 @@ def sendmefile(message):
     if check_for_access(message.from_user.id):
         dir_list = os.listdir(path_for_telebot)
         otchet_all = [name for name in dir_list if 'all' in name]
+        otchet_all.sort()
         if len(otchet_all) > 0:
             with open(path_for_telebot + otchet_all[-1], 'rb') as file:
                 bot.send_document(message.chat.id, file)
