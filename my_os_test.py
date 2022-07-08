@@ -96,7 +96,7 @@ def start(message):
         processoutput = os.popen("ps -axf").read()
         my_list = processoutput.split('\n')
         for index in my_list:
-            if 'python3' in index:
+            if '.py' in index:
                 my_process_py += index + '\n'
         bot.send_message(message.chat.id, my_process_py)
     else:
@@ -218,8 +218,12 @@ def sendmefile(message):
         if len(spl) > 1:
             if 'all' in spl[1]:
                 sender('all')
-            if 'd' in spl[1]:
+            elif 'd' in spl[1]:
                 sender('d')
+            else:
+                bot.send_message(message.chat.id, 'может добавить ключик..?')
+    else:
+        bot.send_message(message.chat.id, 'Пожалуй тебя нет в списках..')
 
 
 while True:
