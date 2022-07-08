@@ -81,8 +81,14 @@ bot = telebot.TeleBot(telegramm_token)
 """ бот для запуска на линуксе и мониторинге """
 
 
-def check_for_access(name):
+def check_for_access(name:str):
     if str(name) in my_access_list:
+        return True
+    else:
+        return False
+
+def check_for_subscriber_list(name:str):
+    if str(name) in subscriber_list:
         return True
     else:
         return False
@@ -215,7 +221,7 @@ def sendmefile(message):
         else:
             bot.send_message(message.chat.id, 'file not found.. sorry')
 
-    if check_for_access(message.from_user.id):
+    if check_for_subscriber_list(message.from_user.id):
         spl = message.text.split()
         if len(spl) > 1:
             if 'all' in spl[1]:
@@ -225,7 +231,7 @@ def sendmefile(message):
         else:
             bot.send_message(message.chat.id, 'может добавить ключик..?')
     else:
-        bot.send_message(message.chat.id, 'Пожалуй тебя нет в списках..')
+        bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
 
 
 while True:
