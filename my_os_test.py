@@ -232,7 +232,7 @@ def sendmefile(message):
             bot.send_message(message.chat.id, 'может добавить ключик..?')
     else:
         bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
-
+        from my_os_test_config import subscriber_list
 
 while True:
     try:
