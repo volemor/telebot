@@ -20,7 +20,7 @@ import datetime
 from sqlalchemy import create_engine
 from my_os_test_config import *
 
-sql_login = 'mysql+pymysql://python:python@192.168.0.118/hist_data'
+
 db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 import pandas as pd
 
