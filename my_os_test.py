@@ -92,9 +92,9 @@ bot = telebot.TeleBot(telegramm_token)
 """ бот для запуска на линуксе и мониторинге """
 
 
-def save_name_to_log(name: str):
+def save_name_to_log(name: str, modul:str):
     with open('telebot.log', 'a') as file_log:
-        file_log.write(f'[{datetime.datetime.today()}] name_id:[{name}]' + '\n')
+        file_log.write(f'[{datetime.datetime.today()}] name_id:[{name}] {modul}' + '\n')
 
 
 def check_for_access(name: str):
@@ -105,9 +105,9 @@ def check_for_access(name: str):
         return False
 
 
-def check_for_subscriber_list(name: str):
+def check_for_subscriber_list(name: str, modul:str):
     if str(name) in subscriber_list:
-        save_name_to_log(name)
+        save_name_to_log(name, modul)
         return True
     else:
         return False
@@ -235,7 +235,7 @@ def sendmefile(message):
         else:
             bot.send_message(message.chat.id, 'file not found.. sorry')
 
-    if check_for_subscriber_list(message.from_user.id):
+    if check_for_subscriber_list(message.from_user.id, 'sendmefile'):
         spl = message.text.split()
         if len(spl) > 1:
             if 'all' in spl[1]:
