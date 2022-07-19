@@ -94,7 +94,7 @@ bot = telebot.TeleBot(telegramm_token)
 
 def save_name_to_log(message, modul:str):
     with open('telebot.log', 'a') as file_log:
-        file_log.write(f'[{datetime.datetime.today()}] ---name_id:[{message.from_user.first_name}]-- {modul}\n')
+        file_log.write(f'[{datetime.datetime.today()}] name_id:[{message.from_user.first_name}]- {modul}\n')
 
 
 def check_for_access(message):
