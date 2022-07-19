@@ -242,11 +242,12 @@ def sendmefile(message):
                 sender('d')
             elif '?' in spl[1]:
                 dir_list = os.listdir(path_for_telebot)
-                otchet_all = [name for name in dir_list if 'отчет' in name]
+                otchet_all = [name for name in dir_list if 'all' in name]
+                otchet_d = [name for name in dir_list if 'd' in name]
+                otchet_d.sort()
                 otchet_all.sort()
-                bot.send_message(message.chat.id, f'last file:\n{otchet_all[-1]}\n{otchet_all[-2]}')
+                bot.send_message(message.chat.id, f'last file:\n{otchet_d[-1]}\n{otchet_all[-2]}')
         else:
-
             bot.send_message(message.chat.id, 'может добавить ключик..?')
     else:
         bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
