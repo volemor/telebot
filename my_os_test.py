@@ -10,6 +10,16 @@ bot_modul_update - подгрузка модулей
 tiker_report_status - report_status
 allrestart - old process killed, make git pull and start new
 sendmefile * - send file
+
+
+command:
+start - ps axf|grep python3
+up_log - update_log
+report_status - report status
+sendmefile - send last report
+netstat - netstat 22 port
+info - user info
+
 """
 
 import os
@@ -211,9 +221,9 @@ def allrestart(message):
 @bot.message_handler(commands=['sendmefile'])
 def sendmefile(message):
     '''send any file'''
+    path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
 
     def sender(key: str):
-        path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
         dir_list = os.listdir(path_for_telebot)
         otchet_all = [name for name in dir_list if key in name]
         otchet_all.sort()
@@ -230,7 +240,13 @@ def sendmefile(message):
                 sender('all')
             elif 'd' in spl[1]:
                 sender('d')
+            elif '?' in spl[1]:
+                dir_list = os.listdir(path_for_telebot)
+                otchet_all = [name for name in dir_list if 'отчет' in name]
+                otchet_all.sort()
+                bot.send_message(message.chat.id, f'last file:\n{otchet_all[-1]}\n{otchet_all[-2]}')
         else:
+
             bot.send_message(message.chat.id, 'может добавить ключик..?')
     else:
         bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
