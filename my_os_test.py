@@ -76,14 +76,14 @@ def my_monitor():
 
 def save_user_info(message):
     log_contact = f'id:[{message.from_user.id}] first_name [{message.from_user.first_name}]'
-    with open(proj_path + 'telebot.log', 'a') as file_log:
+    with open('telebot.log', 'a') as file_log:
         file_log.write(log_contact + '\n')
     print(log_contact)
 
 
 def save_exeption(exeption):
-    with open(proj_path + 'telebot_ex.log', 'a') as file_log:
-        file_log.write(f'[{datetime.date.today()}]' + str(exeption) + '\n')
+    with open('telebot_ex.log', 'a') as file_log:
+        file_log.write(f'[{datetime.datetime.today()}]' + str(exeption) + '\n')
 
 
 # my_monitor()
@@ -93,8 +93,8 @@ bot = telebot.TeleBot(telegramm_token)
 
 
 def save_name_to_log(name: str):
-    with open(proj_path + 'telebot.log', 'a') as file_log:
-        file_log.write(f'[{datetime.date.today()}] name_id:[{name}]' + '\n')
+    with open('telebot.log', 'a') as file_log:
+        file_log.write(f'[{datetime.datetime.today()}] name_id:[{name}]' + '\n')
 
 
 def check_for_access(name: str):
@@ -130,7 +130,6 @@ def start(message):
 
 @bot.message_handler(commands=['up_log'])
 def update_log_status(message):
-    save_user_info(message)
     if check_for_access(message.from_user.id):
         bot.send_message(message.chat.id, os.popen('tail -19 /root/update-sql.log').read())
     else:
@@ -139,7 +138,6 @@ def update_log_status(message):
 
 @bot.message_handler(commands=['netstat'])
 def nenstat_status(message):
-    save_user_info(message)
     if check_for_access(message.from_user.id):
         my_process_py = ''
         processoutput = os.popen("netstat -antp").read()
@@ -156,7 +154,6 @@ def nenstat_status(message):
 
 @bot.message_handler(commands=['info'])
 def user_info(message):
-    save_user_info(message)
     if check_for_access(message.from_user.id):
         log_contact = f'id:[{message.from_user.id}] first_name [{message.from_user.first_name}]'
         print(log_contact)
@@ -192,7 +189,6 @@ def bin_log(message):
 
 @bot.message_handler(commands=['tiker_report_status'])
 def user_info(message):
-    # save_user_info(message)
     my_mes = 'tiker_report_status \n'
     if check_for_access(message.from_user.id):
         sql_message = 'Select tiker, max(day_close) as max_day_close, market from tiker_report group by tiker;'
