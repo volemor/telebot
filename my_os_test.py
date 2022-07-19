@@ -246,7 +246,7 @@ def sendmefile(message):
                 otchet_d = [name for name in dir_list if 'd' in name]
                 otchet_d.sort()
                 otchet_all.sort()
-                bot.send_message(message.chat.id, f'last file:\n{otchet_d[-1]}\n{otchet_all[-2]}')
+                bot.send_message(message.chat.id, f'last file:\n{otchet_d[-1]}\n{otchet_all[-1]}')
         else:
             bot.send_message(message.chat.id, 'может добавить ключик..?')
     else:
