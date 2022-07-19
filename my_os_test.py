@@ -99,7 +99,7 @@ def save_name_to_log(message, modul:str):
 
 def check_for_access(message):
     if str(message.from_user.id) in my_access_list:
-        save_name_to_log(message)
+        save_name_to_log(message, 'access')
         return True
     else:
         return False
