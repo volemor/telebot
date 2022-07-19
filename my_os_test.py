@@ -30,7 +30,6 @@ import datetime
 from sqlalchemy import create_engine
 from my_os_test_config import *
 
-
 db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 import pandas as pd
 
@@ -53,7 +52,7 @@ for index in my_list:
         if 'my_os_test.py' in index:
             count_my_prog += 1
         if count_my_prog == 2:
-            print('pogramm allready run!!!')
+            print('programm allready run!!!')
             exit()
 
 
@@ -93,8 +92,14 @@ bot = telebot.TeleBot(telegramm_token)
 """ бот для запуска на линуксе и мониторинге """
 
 
+def save_name_to_log(name: str):
+    with open(proj_path + 'telebot.log', 'a') as file_log:
+        file_log.write(f'[{datetime.date.today()}] name_id:[{name}]' + '\n')
+
+
 def check_for_access(name: str):
     if str(name) in my_access_list:
+        save_name_to_log(name)
         return True
     else:
         return False
@@ -102,6 +107,7 @@ def check_for_access(name: str):
 
 def check_for_subscriber_list(name: str):
     if str(name) in subscriber_list:
+        save_name_to_log(name)
         return True
     else:
         return False
