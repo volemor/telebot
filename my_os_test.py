@@ -92,22 +92,24 @@ bot = telebot.TeleBot(telegramm_token)
 """ бот для запуска на линуксе и мониторинге """
 
 
-def save_name_to_log(name: str, modul:str):
+def save_name_to_log(message, modul:str):
     with open('telebot.log', 'a') as file_log:
-        file_log.write(f'[{datetime.datetime.today()}] name_id:[{name}] {modul}' + '\n')
+        file_log.write(f'[{datetime.datetime.today()}] name_id:[{message.from_user.first_name}] {modul}\n')
 
 
-def check_for_access(name: str):
-    if str(name) in my_access_list:
-        save_name_to_log(name)
+def check_for_access(message):
+    if str(message.from_user.id) in my_access_list:
+        save_name_to_log(message.from_user.id)
         return True
     else:
         return False
 
+# check_for_access(message.from_user.id)
 
-def check_for_subscriber_list(name: str, modul:str):
-    if str(name) in subscriber_list:
-        save_name_to_log(name, modul)
+
+def check_for_subscriber_list(message, modul:str):
+    if str(message.from_user.id) in subscriber_list:
+        save_name_to_log(message, modul)
         return True
     else:
         return False
@@ -116,7 +118,7 @@ def check_for_subscriber_list(name: str, modul:str):
 @bot.message_handler(commands=['start'])
 def start(message):
     # save_user_info(message)
-    if check_for_access(message.from_user.id):
+    if check_for_access(message):
         my_process_py = ''
         processoutput = os.popen("ps -axf").read()
         my_list = processoutput.split('\n')
@@ -130,7 +132,7 @@ def start(message):
 
 @bot.message_handler(commands=['up_log'])
 def update_log_status(message):
-    if check_for_access(message.from_user.id):
+    if check_for_access(message):
         bot.send_message(message.chat.id, os.popen('tail -19 /root/update-sql.log').read())
     else:
         bot.send_message(message.chat.id, 'все ок')
@@ -138,7 +140,7 @@ def update_log_status(message):
 
 @bot.message_handler(commands=['netstat'])
 def nenstat_status(message):
-    if check_for_access(message.from_user.id):
+    if check_for_access(message):
         my_process_py = ''
         processoutput = os.popen("netstat -antp").read()
         my_list = processoutput.split('\n')
@@ -154,7 +156,7 @@ def nenstat_status(message):
 
 @bot.message_handler(commands=['info'])
 def user_info(message):
-    if check_for_access(message.from_user.id):
+    if check_for_access(message):
         log_contact = f'id:[{message.from_user.id}] first_name [{message.from_user.first_name}]'
         print(log_contact)
         bot.send_message(message.chat.id, message)
@@ -164,7 +166,7 @@ def user_info(message):
 
 @bot.message_handler(commands=['bot_modul_update'])
 def update_modul(message):
-    if check_for_access(message.from_user.id):
+    if check_for_access(message):
         bot.send_message(message.chat.id, 'дополнительные модули подгружены')
     else:
         bot.send_message(message.chat.id, 'дополнительные модули не найдены')
@@ -172,7 +174,7 @@ def update_modul(message):
 
 @bot.message_handler(commands=['binance_log'])
 def bin_log(message):
-    if check_for_access(message.from_user.id):
+    if check_for_access(message):
         sql_login = 'mysql+pymysql://binanse:binanse_pass@192.168.0.118/binance'
         db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
         sql_message = 'select * from hist_data'
@@ -190,7 +192,7 @@ def bin_log(message):
 @bot.message_handler(commands=['tiker_report_status'])
 def user_info(message):
     my_mes = 'tiker_report_status \n'
-    if check_for_access(message.from_user.id):
+    if check_for_access(message):
         sql_message = 'Select tiker, max(day_close) as max_day_close, market from tiker_report group by tiker;'
         df = pd.read_sql(sql_message, con=db_connection)
         for market in df['market'].unique():
@@ -209,7 +211,7 @@ def user_info(message):
 
 @bot.message_handler(commands=['allrestart'])
 def allrestart(message):
-    if check_for_access(message.from_user.id):
+    if check_for_access(message):
         kill_line = ''
         for line in os.popen('ps -axf|grep .py').read().split('\n'):
             if 'my_os_test.py' in line:
@@ -235,7 +237,7 @@ def sendmefile(message):
         else:
             bot.send_message(message.chat.id, 'file not found.. sorry')
 
-    if check_for_subscriber_list(message.from_user.id, 'sendmefile'):
+    if check_for_subscriber_list(message, 'sendmefile'):
         spl = message.text.split()
         if len(spl) > 1:
             if 'all' in spl[1]:
