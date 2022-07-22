@@ -208,7 +208,7 @@ def user_info(message):
     else:
         bot.send_message(message.chat.id, 'нет инфы')
 
- set.intersection()
+# set.intersection()
 @bot.message_handler(commands=['allrestart'])
 def allrestart(message):
     if check_for_access(message):
