@@ -33,7 +33,7 @@ from my_os_test_config import *
 db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 import pandas as pd
 
-if os.name == 'nt':  # проверяем из под чего загрузка.
+if os.name == 'nt': 
     proj_path = 'W:\\My_Python\\stock_update'
     print("start from WINDOWS")
     exit()
@@ -86,7 +86,6 @@ def save_exeption(exeption):
         file_log.write(f'[{datetime.datetime.today()}]' + str(exeption) + '\n')
 
 
-# my_monitor()
 
 bot = telebot.TeleBot(telegramm_token)
 """ бот для запуска на линуксе и мониторинге """
