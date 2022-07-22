@@ -1,3 +1,6 @@
+#! /usr/bin/env python3
+# coding: utf-8
+
 # my telegramm bot
 """
 телеграмм бот для мониторинга системы 'ban'
