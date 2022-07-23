@@ -198,7 +198,7 @@ def user_info(message):
         sql_message = 'Select tiker, max(day_close) as max_day_close, market from tiker_report group by tiker;'
         df = pd.read_sql(sql_message, con=db_connection)
         for market in df['market'].unique():
-            statistik_list = pd.Series({c: df[df['market'] == market][c].unique() for c in df['max_day_close']})
+            statistik_list = pd.Series({c: df[df['market'] == market][c].unique() for c in df})
             statistik_list['max_day_close'].sort()
             # my_mes += ''.join([f'len max_day_close [{len(statistik_list[1])}]\n'])
             my_mes += ''.join([
@@ -265,4 +265,4 @@ while True:
         bot.polling(none_stop=True)
     except Exception as _ex:
         save_exeption(_ex)
-    time.sleep(10)
+    time.sleep(100)
