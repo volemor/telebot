@@ -205,7 +205,6 @@ def user_info(message):
                 f"[{market}][{statistik_list.iat[1][-2]}][{len(df[(df['max_day_close'] == statistik_list.iat[1][-2]) & (df['market'] == market)]['tiker'])}]\n"])
             my_mes += ''.join([
                 f"[{market}][{statistik_list.iat[1][-1]}][{len(df[(df['max_day_close'] == statistik_list.iat[1][-1]) & (df['market'] == market)]['tiker'])}]\n"])
-
         bot.send_message(message.chat.id, my_mes)
     else:
         bot.send_message(message.chat.id, 'нет инфы')
@@ -257,7 +256,7 @@ def sendmefile(message):
             bot.send_message(message.chat.id, 'может добавить ключик..?')
     else:
         bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
-        from my_os_test_config import subscriber_list
+        # from my_os_test_config import subscriber_list
 
 
 while True:
