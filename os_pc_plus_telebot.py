@@ -129,5 +129,5 @@ while True:
         print('tet')
         bot.polling(none_stop=True)
     except Exception as _ex:
-        print(_ex)
+        print(f'[{datetime.datetime.now()}] Error:',_ex)
         time.sleep(200)
