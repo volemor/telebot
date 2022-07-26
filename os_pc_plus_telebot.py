@@ -130,4 +130,4 @@ while True:
         bot.polling(none_stop=True)
     except Exception as _ex:
         print(_ex)
-        time.sleep(20)
+        time.sleep(200)
