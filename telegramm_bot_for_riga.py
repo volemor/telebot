@@ -98,6 +98,14 @@ def auth_log(message):
     else:
         bot.send_message(message.chat.id, f'not for you')
 
+@bot.message_handler(commands=['uptime'])
+def auth_log(message):
+    if check_for_access(message.from_user.id):
+        if os.name != 'nt':
+            bot.send_message(message.chat.id, f"{os.popen('uptime')}")
+    else:
+        bot.send_message(message.chat.id, f'not for you')
+
 
 def auth_log_analyser(message):
     count_fail = 0
