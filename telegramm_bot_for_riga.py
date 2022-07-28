@@ -8,6 +8,8 @@
 start - ps axf|grep python3
 netstat - netstat 22 port
 allrestart- old process killed, make git pull and start new
+auth_log - auth_log
+test - test
 """
 
 import os
@@ -119,7 +121,7 @@ def auth_log_analyser(message):
                 counting += 1
 
         hack_count[my_item] = counting
-    hach_ip_message = 'auth.log status:'
+    hach_ip_message = 'auth.log status:\n'
     for h_key, h_item in hack_count.items():
         hach_ip_message += f'hackers ip [{h_key}] try [{h_item}]\n'
         # print(f'hackers ip [{h_key}] try [{h_item}]')
