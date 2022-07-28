@@ -10,6 +10,7 @@ netstat - netstat 22 port
 allrestart- old process killed, make git pull and start new
 auth_log - auth_log
 test - test
+uptime - uptime
 """
 
 import os
