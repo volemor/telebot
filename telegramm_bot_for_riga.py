@@ -14,29 +14,18 @@ import os
 import telebot
 from tendo import singleton
 import time
-from secret_bot import *
+from secret_bot import secrets_bot_token, my_access_list
 
 me = singleton.SingleInstance()  ### проверка на работу и запуск альтернативной версии скрипта - чтоб не задвоялась
 
 # проверка собстенными силами.. не всегда может сработать - имя поменять и все..
-processoutput = os.popen("ps -axf").read()
-my_list = processoutput.split('\n')
-count_my_prog = 0
-for index in my_list:
-    if '.py' in index:
-        if 'telegramm_bot_for_riga.py' in index:
-            count_my_prog += 1
-        if count_my_prog == 2:
-            print('programm allready run!!!')
-            exit()
 
-
-
+print("Start telebot riga")
 bot = telebot.TeleBot(secrets_bot_token)
 """ бот для запуска на линуксе и мониторинга """
 
 
-def check_for_access(name:str):
+def check_for_access(name: str):
     if str(name) in my_access_list:
         return True
     else:
@@ -72,9 +61,10 @@ def nenstat_status(message):
     else:
         bot.send_message(message.chat.id, 'нет соединений')
 
+
 @bot.message_handler(commands=['allrestart'])
 def allrestart(message):
-    if check_for_access(message):
+    if check_for_access(message.from_user.id):
         kill_line = ''
         for line in os.popen('ps -axf|grep .py').read().split('\n'):
             if 'telegramm_bot_for_riga.py' in line:
@@ -84,6 +74,13 @@ def allrestart(message):
         bot.send_message(message.chat.id, f'old process [{kill_line}] killed, make git pull and start new')
         os.popen(f'nohup /home/dmitry/start_telebot.bat && kill {kill_line}').read()
 
+
+@bot.message_handler(commands=['test'])
+def allrestart(message):
+    if check_for_access(message.from_user.id):
+        bot.send_message(message.chat.id, f'you in access list')
+    else:
+        bot.send_message(message.chat.id, f'not for you')
 
 
 def save_exeption(_ex: str):
