@@ -7,7 +7,7 @@
 команды бота - описание:
 start - ps axf|grep python3
 netstat - netstat 22 port
-
+allrestart- old process killed, make git pull and start new
 """
 
 import os
