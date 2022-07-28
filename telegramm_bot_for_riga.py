@@ -1,6 +1,9 @@
-# my telegramm bot
+#! /usr/bin/env python3
+# coding: utf-8
+
+
 """
-телеграмм бот для мониторинга системы 'riga'
+телеграмм бот для мониторинга системы 'r'
 команды бота - описание:
 start - ps axf|grep python3
 netstat - netstat 22 port
@@ -68,6 +71,19 @@ def nenstat_status(message):
         bot.send_message(message.chat.id, my_process_py)
     else:
         bot.send_message(message.chat.id, 'нет соединений')
+
+@bot.message_handler(commands=['allrestart'])
+def allrestart(message):
+    if check_for_access(message):
+        kill_line = ''
+        for line in os.popen('ps -axf|grep .py').read().split('\n'):
+            if 'telegramm_bot_for_riga.py' in line:
+                print(line.split()[0])
+                kill_line += line.split()[0] + ' '
+        print('kill_line:', kill_line)
+        bot.send_message(message.chat.id, f'old process [{kill_line}] killed, make git pull and start new')
+        os.popen(f'nohup /home/dmitry/start_telebot.bat && kill {kill_line}').read()
+
 
 
 def save_exeption(_ex: str):
