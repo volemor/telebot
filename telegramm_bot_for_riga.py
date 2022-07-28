@@ -36,7 +36,7 @@ bot = telebot.TeleBot(secrets_bot_token)
 """ бот для запуска на линуксе и мониторинга """
 
 
-def check_for_access(name):
+def check_for_access(name:str):
     if str(name) in my_access_list:
         return True
     else:
