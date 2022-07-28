@@ -102,7 +102,7 @@ def auth_log(message):
 def auth_log(message):
     if check_for_access(message.from_user.id):
         if os.name != 'nt':
-            bot.send_message(message.chat.id, f"{os.popen('uptime')}")
+            bot.send_message(message.chat.id, f"{os.popen('uptime').read()}")
     else:
         bot.send_message(message.chat.id, f'not for you')
 
