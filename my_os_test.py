@@ -37,7 +37,7 @@ from my_os_test_config import *
 db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 import pandas as pd
 
-if os.name == 'nt': 
+if os.name == 'nt':
     proj_path = 'W:\\My_Python\\stock_update'
     print("start from WINDOWS")
     exit()
@@ -90,12 +90,11 @@ def save_exeption(exeption):
         file_log.write(f'[{datetime.datetime.today()}]' + str(exeption) + '\n')
 
 
-
 bot = telebot.TeleBot(telegramm_token)
 """ бот для запуска на линуксе и мониторинге """
 
 
-def save_name_to_log(message, modul:str):
+def save_name_to_log(message, modul: str):
     with open('telebot.log', 'a') as file_log:
         file_log.write(f'[{datetime.datetime.today()}] name_id:[{message.from_user.first_name}]- {modul}\n')
 
@@ -107,10 +106,11 @@ def check_for_access(message):
     else:
         return False
 
+
 # check_for_access(message.from_user.id)
 
 
-def check_for_subscriber_list(message, modul:str):
+def check_for_subscriber_list(message, modul: str):
     if str(message.from_user.id) in subscriber_list:
         save_name_to_log(message, modul)
         return True
@@ -136,10 +136,15 @@ def start(message: Message):
 @bot.message_handler(commands=['up_log'])
 def update_log_status(message: Message):
     if check_for_access(message):
-        bot.send_message(message.chat.id, os.popen('tail -19 /root/update-sql.log').read())
+        mess = os.popen('tail -19 /root/update-sql.log').read()
+        if len(mess) > 4000:
+            mess = mess[-4000:]
+        bot.send_message(message.chat.id, mess)
     else:
         bot.send_message(message.chat.id, 'все ок')
 
+
+# ln -s /root/my_py/stock_update/update.log /root/update-sql.log
 
 @bot.message_handler(commands=['netstat'])
 def nenstat_status(message: Message):
@@ -210,6 +215,7 @@ def user_info(message: Message):
     else:
         bot.send_message(message.chat.id, 'нет инфы')
 
+
 # set.intersection()
 @bot.message_handler(commands=['allrestart'])
 def allrestart(message: Message):
@@ -228,6 +234,7 @@ def allrestart(message: Message):
 def sendmefile(message: Message):
     '''send any file'''
     path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
+
     def sender(key: str):
         dir_list = os.listdir(path_for_telebot)
         otchet_all = [name for name in dir_list if key in name]
@@ -253,7 +260,8 @@ def sendmefile(message: Message):
                 otchet_all.sort()
                 bot.send_message(message.chat.id, f'last file:\n{otchet_d[-1]}\n{otchet_all[-1]}')
         else:
-            bot.send_message(message.chat.id, 'может добавить ключик..?(/sendmefile key):\n  посмотреть список файлов - ?\n  отчет полный - all\n  отчет с вырезкой - d\n')
+            bot.send_message(message.chat.id,
+                             'может добавить ключик..?(/sendmefile key):\n  посмотреть список файлов - ?\n  отчет полный - all\n  отчет с вырезкой - d\n')
     else:
         bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
         # from my_os_test_config import subscriber_list
