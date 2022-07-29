@@ -253,7 +253,7 @@ def sendmefile(message: Message):
                 otchet_all.sort()
                 bot.send_message(message.chat.id, f'last file:\n{otchet_d[-1]}\n{otchet_all[-1]}')
         else:
-            bot.send_message(message.chat.id, 'может добавить ключик..?:\nпосмотреть список файлов - ?\nотчет полный - all\nотчет с вырезкой - d\n')
+            bot.send_message(message.chat.id, 'может добавить ключик..?:\n  посмотреть список файлов - ?\n  отчет полный - all\n  отчет с вырезкой - d\n')
     else:
         bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
         # from my_os_test_config import subscriber_list
