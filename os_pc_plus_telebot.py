@@ -6,6 +6,8 @@ jr
 
 '''
 import os, time, datetime
+
+from telebot.types import Message
 from tendo import singleton
 import telebot
 
@@ -88,13 +90,13 @@ def python_process(message):
 
 
 @bot.message_handler(commands=['start'])
-def start(message):
+def start(message: Message):
     print('start')
     bot.send_message(message.chat.id, 'test complete')
 
 
 @bot.message_handler(commands=['kill'])
-def test_subcom(message):
+def test_subcom(message: Message):
     '''if input kill 123 -> print 123 '''
     spl = message.text.split()
     bot.send_message(message.chat.id, spl[1])

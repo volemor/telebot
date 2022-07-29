@@ -27,6 +27,7 @@ info - user info
 
 import os
 import telebot
+from telebot.types import Message
 from tendo import singleton
 import time
 import datetime
@@ -118,7 +119,7 @@ def check_for_subscriber_list(message, modul:str):
 
 
 @bot.message_handler(commands=['start'])
-def start(message):
+def start(message: Message):
     # save_user_info(message)
     if check_for_access(message):
         my_process_py = ''
@@ -133,7 +134,7 @@ def start(message):
 
 
 @bot.message_handler(commands=['up_log'])
-def update_log_status(message):
+def update_log_status(message: Message):
     if check_for_access(message):
         bot.send_message(message.chat.id, os.popen('tail -19 /root/update-sql.log').read())
     else:
@@ -141,7 +142,7 @@ def update_log_status(message):
 
 
 @bot.message_handler(commands=['netstat'])
-def nenstat_status(message):
+def nenstat_status(message: Message):
     if check_for_access(message):
         my_process_py = ''
         processoutput = os.popen("netstat -antp").read()
@@ -157,7 +158,7 @@ def nenstat_status(message):
 
 
 @bot.message_handler(commands=['info'])
-def user_info(message):
+def user_info(message: Message):
     if check_for_access(message):
         log_contact = f'id:[{message.from_user.id}] first_name [{message.from_user.first_name}]'
         print(log_contact)
@@ -167,7 +168,7 @@ def user_info(message):
 
 
 @bot.message_handler(commands=['bot_modul_update'])
-def update_modul(message):
+def update_modul(message: Message):
     if check_for_access(message):
         bot.send_message(message.chat.id, 'дополнительные модули подгружены')
     else:
@@ -175,7 +176,7 @@ def update_modul(message):
 
 
 @bot.message_handler(commands=['binance_log'])
-def bin_log(message):
+def bin_log(message: Message):
     if check_for_access(message):
         sql_login = 'mysql+pymysql://binanse:binanse_pass@192.168.0.118/binance'
         db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
@@ -192,7 +193,7 @@ def bin_log(message):
 
 
 @bot.message_handler(commands=['tiker_report_status'])
-def user_info(message):
+def user_info(message: Message):
     my_mes = 'tiker_report_status \n'
     if check_for_access(message):
         sql_message = 'Select tiker, max(day_close) as max_day_close, market from tiker_report group by tiker;'
@@ -211,7 +212,7 @@ def user_info(message):
 
 # set.intersection()
 @bot.message_handler(commands=['allrestart'])
-def allrestart(message):
+def allrestart(message: Message):
     if check_for_access(message):
         kill_line = ''
         for line in os.popen('ps -axf|grep .py').read().split('\n'):
@@ -224,10 +225,9 @@ def allrestart(message):
 
 
 @bot.message_handler(commands=['sendmefile'])
-def sendmefile(message):
+def sendmefile(message: Message):
     '''send any file'''
     path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
-
     def sender(key: str):
         dir_list = os.listdir(path_for_telebot)
         otchet_all = [name for name in dir_list if key in name]

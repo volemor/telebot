@@ -15,6 +15,7 @@ uptime - uptime
 
 import os
 import telebot
+from telebot.types import Message
 from tendo import singleton
 import time, datetime
 from secret_bot import secrets_bot_token, my_access_list
@@ -36,7 +37,7 @@ def check_for_access(name: str):
 
 
 @bot.message_handler(commands=['start'])
-def start(message):
+def start(message: Message):
     if check_for_access(message.from_user.id):
         my_process_py = ''
         processoutput = os.popen("ps -axf").read()
@@ -50,7 +51,7 @@ def start(message):
 
 
 @bot.message_handler(commands=['netstat'])
-def nenstat_status(message):
+def nenstat_status(message: Message):
     if check_for_access(message.from_user.id):
         my_process_py = ''
         processoutput = os.popen("netstat -antp").read()
@@ -66,7 +67,7 @@ def nenstat_status(message):
 
 
 @bot.message_handler(commands=['allrestart'])
-def allrestart(message):
+def allrestart(message: Message):
     if check_for_access(message.from_user.id):
         kill_line = ''
         for line in os.popen('ps -axf|grep .py').read().split('\n'):
@@ -79,7 +80,7 @@ def allrestart(message):
 
 
 @bot.message_handler(commands=['test'])
-def test_test(message):
+def test_test(message: Message):
     if check_for_access(message.from_user.id):
         bot.send_message(message.chat.id, f'you in access list')
     else:
@@ -92,7 +93,7 @@ def save_exeption(_ex: str):
 
 
 @bot.message_handler(commands=['auth_log'])
-def auth_log(message):
+def auth_log(message: Message):
     if check_for_access(message.from_user.id):
         my_mess = auth_log_analyser(message)
         bot.send_message(message.chat.id, f'{my_mess}')
