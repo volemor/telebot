@@ -10,19 +10,18 @@ import os, time, datetime
 from telebot.types import Message
 from tendo import singleton
 import telebot
-
 from os_pi_plus_secure import *
-
 import pandas as pd
 
+
 me = singleton.SingleInstance()
-time.sleep(2)
+# time.sleep(2)
 
 bot = telebot.TeleBot(secret_bot_token)
 print("start Ok")
 
 
-def check_accesss(name):
+def check_accesss(name: int):
     if str(name) in my_access_list:
         return True
     else:
@@ -30,7 +29,7 @@ def check_accesss(name):
 
 
 @bot.message_handler(commands=['b1'])
-def bin_bot_log_list(message):
+def bin_bot_log_list(message: Message):
     if check_accesss(message.from_user.id):
         bot.send_message(message.chat.id, os.popen('tail -10 /root/binance_main/bot_1.log').read())
     else:
@@ -38,7 +37,7 @@ def bin_bot_log_list(message):
 
 
 @bot.message_handler(commands=['b1_ex'])
-def bin_bot_Exception_log_list(message):
+def bin_bot_Exception_log_list(message: Message):
     if check_accesss(message.from_user.id):
         print(os.listdir('/root/binance_main/'))
         if 'ext_log.log' in os.listdir('/root/binance_main/'):
@@ -55,7 +54,7 @@ def bin_bot_Exception_log_list(message):
 
 
 @bot.message_handler(commands=['b1_json'])
-def bin_bot_deal_log_list(message):
+def bin_bot_deal_log_list(message: Message):
     if check_accesss(message.from_user.id):
         mes_data = ''
         for line in os.popen('tail -10 /root/binance_main/bot_1_deal_log.json').read().split('\n'):
@@ -76,7 +75,7 @@ def bin_bot_deal_log_list(message):
 
 
 @bot.message_handler(commands=['python'])
-def python_process(message):
+def python_process(message: Message):
     if check_accesss(message.from_user.id):
         my_process_py = ''
         for index in os.popen("ps -axf").read().split('\n'):
@@ -112,9 +111,8 @@ def test_subcom(message: Message):
 #             bot.send_document(message.chat.id, file)
 
 
-
 @bot.message_handler(commands=['allrestart'])
-def allrestart(message):
+def allrestart(message: Message):
     if check_accesss(message.from_user.id):
         kill_line = ''
         for line in os.popen('ps -axf|grep .py').read().split('\n'):
@@ -131,5 +129,5 @@ while True:
         print('tet')
         bot.polling(none_stop=True)
     except Exception as _ex:
-        print(f'[{datetime.datetime.now()}] Error:',_ex)
+        print(f'[{datetime.datetime.now()}] Error:', _ex)
         time.sleep(200)
