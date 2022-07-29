@@ -138,7 +138,7 @@ def update_log_status(message: Message):
     if check_for_access(message):
         mess = os.popen('tail -19 /root/update-sql.log').read()
         if len(mess) > 4000:
-            mess = mess[-4000:]
+            mess = mess[-2000:]
         bot.send_message(message.chat.id, mess)
     else:
         bot.send_message(message.chat.id, 'все ок')
