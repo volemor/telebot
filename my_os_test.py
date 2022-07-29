@@ -252,13 +252,17 @@ def sendmefile(message: Message):
                 sender('all')
             elif 'd' in spl[1]:
                 sender('d')
+            elif 't' in spl[1]:
+                sender('teh_out')
             elif '?' in spl[1]:
                 dir_list = os.listdir(path_for_telebot)
                 otchet_all = [name for name in dir_list if 'all' in name]
                 otchet_d = [name for name in dir_list if 'd' in name]
+                otchet_teh = [name for name in dir_list if 'teh_out' in name]
                 otchet_d.sort()
                 otchet_all.sort()
-                bot.send_message(message.chat.id, f'last file:\n{otchet_d[-1]}\n{otchet_all[-1]}')
+                otchet_teh.sort()
+                bot.send_message(message.chat.id, f'last file:\n{otchet_d[-1]}\n{otchet_all[-1]}\n{otchet_teh[-1]}')
         else:
             bot.send_message(message.chat.id,
                              'может добавить ключик..?(/sendmefile key):\n  посмотреть список файлов - ?\n  отчет полный - all\n  отчет с вырезкой - d\n')
