@@ -2,3 +2,4 @@ pandas
 sqlalchemy
 pyTelegramBotAPI
 tendo
+# telegram-menu
