@@ -77,7 +77,7 @@ def check_local_data_base():
             CREATE TABLE USER (
                 id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER,
-                group_id TEXT
+                user_group TEXT
             );
         """)
 
