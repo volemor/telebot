@@ -142,7 +142,7 @@ def menu(message: Message):
 
 
 @bot.message_handler(commands=['log'])
-def update_log_status(message: Message):
+def log_status(message: Message):
     if check_for_access(message):
         markup = types.ReplyKeyboardMarkup()
         itembtna = types.KeyboardButton('/log update')
@@ -170,10 +170,29 @@ def update_log_status(message: Message):
                     bot.send_message(message.chat.id, 'File not found')
         else:
             bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
-
     else:
         bot.send_message(message.chat.id, 'все ок')
 
+@bot.message_handler(commands=['run'])
+def run_some(message: Message):
+    if check_for_access(message):
+        markup = types.ReplyKeyboardMarkup()
+        itembtna = types.KeyboardButton('/run update')
+        itembtnd = types.KeyboardButton('/run calc')
+        markup.row(itembtna, itembtnd)
+
+        spl = message.text.split()
+        if len(spl) > 1:
+            if 'update' in spl[1]:
+                # os.popen('cd /root/my_py/stock_update/ && nohup python3 update_sql.py &')
+                bot.send_message(message.chat.id, 'stock update start')
+            elif 'calc' in spl[1]:
+                # os.popen('/root/st_report_calc_start.bat')
+                bot.send_message(message.chat.id, 'stock report calc start')
+        else:
+            bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
+    else:
+        bot.send_message(message.chat.id, 'все ок')
 
 # ln -s /root/my_py/stock_update/update.log /root/update-sql.log
 
@@ -203,29 +222,29 @@ def user_info(message: Message):
         bot.send_message(message.chat.id, 'нет инфы')
 
 
-@bot.message_handler(commands=['bot_modul_update'])
-def update_modul(message: Message):
-    if check_for_access(message):
-        bot.send_message(message.chat.id, 'дополнительные модули подгружены')
-    else:
-        bot.send_message(message.chat.id, 'дополнительные модули не найдены')
+# @bot.message_handler(commands=['bot_modul_update'])
+# def update_modul(message: Message):
+#     if check_for_access(message):
+#         bot.send_message(message.chat.id, 'дополнительные модули подгружены')
+#     else:
+#         bot.send_message(message.chat.id, 'дополнительные модули не найдены')
 
 
-@bot.message_handler(commands=['binance_log'])
-def bin_log(message: Message):
-    if check_for_access(message):
-        sql_login = 'mysql+pymysql://binanse:binanse_pass@192.168.0.118/binance'
-        db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
-        sql_message = 'select * from hist_data'
-        df = pd.read_sql(sql_message, con=db_connection)
-        new_mes = "[7] последних записей в базе данных:\n"
-        mes = df['date_time'].tail(7).to_list()
-        for item in mes:
-            new_mes += ''.join(item)
-            new_mes += ''.join('\n')
-        bot.send_message(message.chat.id, new_mes)
-    else:
-        bot.send_message(message.chat.id, 'дополнительные модули не найдены')
+# @bot.message_handler(commands=['binance_log'])
+# def bin_log(message: Message):
+#     if check_for_access(message):
+#         sql_login = 'mysql+pymysql://binanse:binanse_pass@192.168.0.118/binance'
+#         db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
+#         sql_message = 'select * from hist_data'
+#         df = pd.read_sql(sql_message, con=db_connection)
+#         new_mes = "[7] последних записей в базе данных:\n"
+#         mes = df['date_time'].tail(7).to_list()
+#         for item in mes:
+#             new_mes += ''.join(item)
+#             new_mes += ''.join('\n')
+#         bot.send_message(message.chat.id, new_mes)
+#     else:
+#         bot.send_message(message.chat.id, 'дополнительные модули не найдены')
 
 
 @bot.message_handler(commands=['tiker_report_status'])
@@ -258,7 +277,7 @@ def allrestart(message: Message):
                 kill_line += line.split()[0] + ' '
         print('kill_line:', kill_line)
         bot.send_message(message.chat.id, f'old process [{kill_line}] killed, make git pull and start new')
-        os.popen(f'nohup /root/mytelebot_start.bat && kill {kill_line}').read()
+        os.popen(f'nohup /root/mytelebot_start.bat && kill {kill_line}')
 
 
 @bot.message_handler(commands=['sendmefile'])
