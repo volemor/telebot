@@ -28,6 +28,7 @@ info - user info
 import os
 import telebot
 from telebot.types import Message
+from telebot import types
 from tendo import singleton
 import time
 import datetime
@@ -131,6 +132,14 @@ def start(message: Message):
         bot.send_message(message.chat.id, my_process_py)
     else:
         bot.send_message(message.chat.id, 'запуск прошел успешно')
+
+@bot.message_handler(commands=['menu'])
+def menu(message: Message):
+    # save_user_info(message)
+    if check_for_access(message):
+        bot.send_message(message.chat.id, 'new menu')
+    else:
+        bot.send_message(message.chat.id, 'menu')
 
 
 @bot.message_handler(commands=['up_log'])
@@ -269,6 +278,54 @@ def sendmefile(message: Message):
     else:
         bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
         # from my_os_test_config import subscriber_list
+
+
+@bot.message_handler(commands=['sendme'])
+def sendme(message: Message):
+    '''send any file'''
+    path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
+
+    def sender(key: str):
+        dir_list = os.listdir(path_for_telebot)
+        otchet_all = [name for name in dir_list if key in name]
+        otchet_all.sort()
+        if len(otchet_all) > 0:
+            with open(path_for_telebot + otchet_all[-1], 'rb') as file:
+                bot.send_document(message.chat.id, file)
+        else:
+            bot.send_message(message.chat.id, 'file not found.. sorry')
+
+    if check_for_subscriber_list(message, 'sendmefile'):
+        markup = types.ReplyKeyboardMarkup()
+        itembtna = types.KeyboardButton('all')
+        itembtnd = types.KeyboardButton('d')
+        itembtnQ = types.KeyboardButton('?')
+        markup.row(itembtna, itembtnd, itembtnQ)
+        bot.send_message(message.from_user.id, "Choose one letter:", reply_markup=markup)
+
+
+        spl = message.text.split()
+        if len(spl) > 1:
+            if 'all' in spl[1]:
+                sender('all')
+            elif 'd' in spl[1]:
+                sender('d')
+            elif 't' in spl[1]:
+                sender('teh_out')
+            elif '?' in spl[1]:
+                dir_list = os.listdir(path_for_telebot)
+                otchet_all = [name for name in dir_list if 'all' in name]
+                otchet_d = [name for name in dir_list if 'd' in name]
+                otchet_teh = [name for name in dir_list if 'teh_out' in name]
+                otchet_d.sort()
+                otchet_all.sort()
+                otchet_teh.sort()
+                bot.send_message(message.chat.id, f'last file:\n{otchet_d[-1]}\n{otchet_all[-1]}\n{otchet_teh[-1]}')
+        else:
+            bot.send_message(message.chat.id,
+                             'может добавить ключик..?(/sendmefile key):\n  посмотреть список файлов - ?\n  отчет полный - all\n  отчет с вырезкой - d\n  отчет teh_out_SPB - t\n')
+    else:
+        bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
 
 
 while True:
