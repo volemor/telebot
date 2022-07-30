@@ -93,9 +93,10 @@ def check_local_data_base():
         bot.send_message(my_access_list[0], f'CREATE TABLE USER in db')
         mess_add = local_sql.execute('select * from USER;').fetchall()
         bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
-    else:
-        mess_add = local_sql.execute('select * from USER;').fetchall()
-        bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
+    # else:
+    #
+    #     mess_add = local_sql.execute('select * from USER;').fetchall()
+    #     bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
 
 
 
