@@ -260,10 +260,7 @@ def sendmefile(message: Message):
         itembtnd = types.KeyboardButton('/sendmefile d')
         itembtnQ = types.KeyboardButton('/sendmefile ?')
         itembtnTeh = types.KeyboardButton('/sendmefile teh_out')
-
         markup.row(itembtna, itembtnd, itembtnQ, itembtnTeh)
-
-
 
         spl = message.text.split()
         if len(spl) > 1:
@@ -283,7 +280,7 @@ def sendmefile(message: Message):
                 otchet_teh.sort()
                 bot.send_message(message.chat.id, f'last file:\n{otchet_d[-1]}\n{otchet_all[-1]}\n{otchet_teh[-1]}')
         else:
-            bot.send_message(message.from_user.id, "Choose one letter:", reply_markup=markup)
+            bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
     else:
         bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
         # from my_os_test_config import subscriber_list
