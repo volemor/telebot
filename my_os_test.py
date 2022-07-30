@@ -70,32 +70,32 @@ def check_local_data_base():
     """
 
     local_sql = sqlite3.connect('local_sql.db')
-    tab_name = local_sql.execute("select name from sqlite_master where type = 'table';").fetchall()
+    tab_name = {j for i in local_sql.execute("select name from sqlite_master where type = 'table';").fetchall() for j in i}
     print('\nTAB NAME:::',tab_name)
-    for item in tab_name:
-        if 'USER' not in item:
-            print('ITEM:::::::::::::', item)
-            local_sql.execute("""
-                CREATE TABLE USER (
-                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                    user_id INTEGER,
-                    user_group TEXT
-                );
-            """)
 
-            sql = 'INSERT INTO USER (user_id, user_group) values( ?, ?)'
-            data = [
-                (my_access_list[0], 'root'), (my_access_list[1], 'root') ,
-                (subscriber_list[2], 'subscriber'), (subscriber_list[3], 'subscriber')
-            ]
-            with local_sql:
-                local_sql.executemany(sql, data)
-            bot.send_message(my_access_list[0], f'CREATE TABLE USER in db')
-            mess_add = local_sql.execute('select * from USER;').fetchall()
-            bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
-        else:
-            mess_add = local_sql.execute('select * from USER;').fetchall()
-            bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
+    if 'USER' not in tab_name:
+        print('ITEM:::::::::::::', item)
+        local_sql.execute("""
+            CREATE TABLE USER (
+                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                user_group TEXT
+            );
+        """)
+
+        sql = 'INSERT INTO USER (user_id, user_group) values( ?, ?)'
+        data = [
+            (my_access_list[0], 'root'), (my_access_list[1], 'root') ,
+            (subscriber_list[2], 'subscriber'), (subscriber_list[3], 'subscriber')
+        ]
+        with local_sql:
+            local_sql.executemany(sql, data)
+        bot.send_message(my_access_list[0], f'CREATE TABLE USER in db')
+        mess_add = local_sql.execute('select * from USER;').fetchall()
+        bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
+    else:
+        mess_add = local_sql.execute('select * from USER;').fetchall()
+        bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
 
 
 
