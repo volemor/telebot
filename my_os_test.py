@@ -11,12 +11,12 @@ netstat - netstat 22 port
 info - user info
 tiker_report_status - report_status
 allrestart - old process killed, make git pull and start new
-sendmefile - send file
+sendmefile - send any file
 
 
 command:
 start - ps axf|grep python3
-up_log - update_log
+log - any log
 report_status - report status
 sendmefile - send last report
 netstat - netstat 22 port
@@ -33,7 +33,7 @@ import time
 import datetime
 from sqlalchemy import create_engine
 from my_os_test_config import *
-
+import sqlite3
 db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 import pandas as pd
 
@@ -44,6 +44,7 @@ if os.name == 'nt':
 else:
     proj_path = '/mnt/1T/opt/gig/My_Python/stock_update/'
     print("start from LINUX")
+
 
 me = singleton.SingleInstance()  ### проверка на работу и запуск альтернативной версии скрипта - чтоб не задвоялась
 
@@ -58,6 +59,46 @@ for index in my_list:
         if count_my_prog == 2:
             print('programm allready run!!!')
             exit()
+
+bot = telebot.TeleBot(telegramm_token)
+""" бот для запуска на линуксе и мониторинге """
+
+def check_local_data_base():
+    """
+    add local db for users if not open
+    :return:
+    """
+
+    local_sql = sqlite3.connect('local_sql.db')
+    if 'USER' not in local_sql.execute("select name from sqlite_master where type = 'table';").fetchall()[1]:
+
+        local_sql.execute("""
+            CREATE TABLE USER (
+                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                group_id TEXT
+            );
+        """)
+
+        sql = 'INSERT INTO USER (user_id, user_group) values( ?, ?)'
+        data = [
+            (my_access_list[0], 'root'), (my_access_list[1], 'root') ,
+            (subscriber_list[2], 'subscriber'), (subscriber_list[3], 'subscriber')
+        ]
+        with local_sql:
+            local_sql.executemany(sql, data)
+        bot.send_message(my_access_list[0], f'CREATE TABLE USER in db')
+        mess_add = local_sql.execute('select * from USER;').fetchall()
+        bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
+    else:
+        mess_add = local_sql.execute('select * from USER;').fetchall()
+        bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
+
+
+
+
+
+check_local_data_base()
 
 
 def my_monitor():
@@ -90,8 +131,7 @@ def save_exeption(exeption):
         file_log.write(f'[{datetime.datetime.today()}]' + str(exeption) + '\n')
 
 
-bot = telebot.TeleBot(telegramm_token)
-""" бот для запуска на линуксе и мониторинге """
+
 
 
 def save_name_to_log(message, modul: str):
@@ -131,6 +171,7 @@ def start(message: Message):
         bot.send_message(message.chat.id, my_process_py)
     else:
         bot.send_message(message.chat.id, 'запуск прошел успешно')
+
 
 @bot.message_handler(commands=['menu'])
 def menu(message: Message):
@@ -173,6 +214,7 @@ def log_status(message: Message):
     else:
         bot.send_message(message.chat.id, 'все ок')
 
+
 @bot.message_handler(commands=['run'])
 def run_some(message: Message):
     if check_for_access(message):
@@ -193,6 +235,7 @@ def run_some(message: Message):
             bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
     else:
         bot.send_message(message.chat.id, 'все ок')
+
 
 # ln -s /root/my_py/stock_update/update.log /root/update-sql.log
 
@@ -325,9 +368,6 @@ def sendmefile(message: Message):
     else:
         bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
         # from my_os_test_config import subscriber_list
-
-
-
 
 
 while True:
