@@ -146,18 +146,28 @@ def update_log_status(message: Message):
     if check_for_access(message):
         markup = types.ReplyKeyboardMarkup()
         itembtna = types.KeyboardButton('/log update')
-        itembtnd = types.KeyboardButton('/log d')
+        itembtnd = types.KeyboardButton('/log calc')
         markup.row(itembtna, itembtnd)
 
         spl = message.text.split()
         if len(spl) > 1:
             if 'update' in spl[1]:
-                mess = os.popen('tail -19 /root/update-sql.log').read()
-                if len(mess) > 4000:
-                    mess = mess[-2000:]
-                bot.send_message(message.chat.id, mess)
-            elif 'd' in spl[1]:
-                bot.send_message(message.chat.id, 'new -- func...')
+                try:
+                    mess = os.popen('tail -19 /root/update-sql.log').read()
+                    if len(mess) > 4000:
+                        mess = mess[-2000:]
+                    bot.send_message(message.chat.id, mess)
+                except FileExistsError:
+                    bot.send_message(message.chat.id, 'File not found')
+
+            elif 'calc' in spl[1]:
+                try:
+                    mess = os.popen('tail -19 /root/my_py/stock_rep_calc/log/make_from_sql.log').read()
+                    if len(mess) > 4000:
+                        mess = mess[-2000:]
+                    bot.send_message(message.chat.id, mess)
+                except FileExistsError:
+                    bot.send_message(message.chat.id, 'File not found')
         else:
             bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
 
