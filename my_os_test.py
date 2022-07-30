@@ -323,7 +323,7 @@ def allrestart(message: Message):
                 kill_line += line.split()[0] + ' '
         print('kill_line:', kill_line)
         bot.send_message(message.chat.id, f'old process [{kill_line}] killed, make git pull and start new')
-        os.popen(f'/root/mytelebot_start.bat && kill {kill_line}')
+        os.popen(f'/root/mytelebot_start.bat && kill {kill_line} &')
 
 
 @bot.message_handler(commands=['sendmefile'])
