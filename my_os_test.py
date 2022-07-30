@@ -71,7 +71,7 @@ def check_local_data_base():
 
     local_sql = sqlite3.connect('local_sql.db')
     tab_name = {j for i in local_sql.execute("select name from sqlite_master where type = 'table';").fetchall() for j in i}
-    print('\nTAB NAME:::',tab_name)
+    # print('\nTAB NAME:::',tab_name)
 
     if 'USER' not in tab_name:
         print('ITEM:::::::::::::', item)
@@ -323,7 +323,7 @@ def allrestart(message: Message):
                 kill_line += line.split()[0] + ' '
         print('kill_line:', kill_line)
         bot.send_message(message.chat.id, f'old process [{kill_line}] killed, make git pull and start new')
-        os.popen(f'nohup /root/mytelebot_start.bat && kill {kill_line}')
+        os.popen(f'/root/mytelebot_start.bat && kill {kill_line}')
 
 
 @bot.message_handler(commands=['sendmefile'])
