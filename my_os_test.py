@@ -297,12 +297,12 @@ def sendme(message: Message):
 
     if check_for_subscriber_list(message, 'sendmefile'):
         markup = types.ReplyKeyboardMarkup()
-        itembtna = types.KeyboardButton('all')
-        itembtnd = types.KeyboardButton('d')
-        itembtnQ = types.KeyboardButton('?')
+        itembtna = types.KeyboardButton('/sendmefile all')
+        itembtnd = types.KeyboardButton('/sendmefile d')
+        itembtnQ = types.KeyboardButton('/sendmefile ?')
         markup.row(itembtna, itembtnd, itembtnQ)
         bot.send_message(message.from_user.id, "Choose one letter:", reply_markup=markup)
-        bot.reply_to(message, 'any')
+        # bot.reply_to(message, 'any')
         if message.text == 'd':
             bot.send_message(message, 'you --- try d ')
         spl = message.text.split()
