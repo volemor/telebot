@@ -297,8 +297,8 @@ def sendme(message: Message):
 
     if check_for_subscriber_list(message, 'sendmefile'):
         markup = types.ReplyKeyboardMarkup()
-        itembtna = types.KeyboardButton('all')
-        itembtnd = types.KeyboardButton('sendmefile d')
+        itembtna = types.KeyboardButton('/sendmefile all')
+        itembtnd = types.KeyboardButton('/sendmefile d')
         itembtnQ = types.KeyboardButton('/sendmefile ?')
         markup.row(itembtna, itembtnd, itembtnQ)
         bot.send_message(message.from_user.id, "Choose one letter:", reply_markup=markup)
