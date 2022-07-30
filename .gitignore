@@ -2,3 +2,4 @@
 /secret_bot.py
 /divTelebot_config.py
 /my_os_test_config.py
+*.db
