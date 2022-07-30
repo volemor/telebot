@@ -71,6 +71,7 @@ def check_local_data_base():
 
     local_sql = sqlite3.connect('local_sql.db')
     tab_name = local_sql.execute("select name from sqlite_master where type = 'table';").fetchall()
+    print('\nTAB NAME:::',tab_name)
     for item in tab_name:
         if 'USER' not in item:
             local_sql.execute("""
