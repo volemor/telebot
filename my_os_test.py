@@ -159,6 +159,8 @@ def update_log_status(message: Message):
                 bot.send_message(message.chat.id, mess)
             elif 'd' in spl[1]:
                 bot.send_message(message.chat.id, 'new -- func...')
+        else:
+            bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
 
     else:
         bot.send_message(message.chat.id, 'все ок')
