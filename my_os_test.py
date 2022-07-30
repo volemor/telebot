@@ -297,7 +297,7 @@ def sendme(message: Message):
 
     if check_for_subscriber_list(message, 'sendmefile'):
         markup = types.ReplyKeyboardMarkup()
-        itembtna = types.KeyboardButton('/sendmefile all')
+        itembtna = types.KeyboardButton('all')
         itembtnd = types.KeyboardButton('/sendmefile d')
         itembtnQ = types.KeyboardButton('/sendmefile ?')
         markup.row(itembtna, itembtnd, itembtnQ)
