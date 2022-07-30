@@ -263,7 +263,7 @@ def sendmefile(message: Message):
 
         markup.row(itembtna, itembtnd, itembtnQ, itembtnTeh)
 
-        bot.send_message(message.from_user.id, "Choose one letter:", reply_markup=markup)
+
 
         spl = message.text.split()
         if len(spl) > 1:
@@ -282,7 +282,8 @@ def sendmefile(message: Message):
                 otchet_all.sort()
                 otchet_teh.sort()
                 bot.send_message(message.chat.id, f'last file:\n{otchet_d[-1]}\n{otchet_all[-1]}\n{otchet_teh[-1]}')
-
+        else:
+            bot.send_message(message.from_user.id, "Choose one letter:", reply_markup=markup)
     else:
         bot.send_message(message.chat.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
         # from my_os_test_config import subscriber_list
