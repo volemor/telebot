@@ -142,12 +142,12 @@ def menu(message: Message):
         bot.send_message(message.chat.id, 'menu')
 
 
-@bot.message_handler(commands=['up_log'])
+@bot.message_handler(commands=['log'])
 def update_log_status(message: Message):
     if check_for_access(message):
         markup = types.ReplyKeyboardMarkup()
-        itembtna = types.KeyboardButton('/up_log all')
-        itembtnd = types.KeyboardButton('/up_log d')
+        itembtna = types.KeyboardButton('/log all')
+        itembtnd = types.KeyboardButton('/log d')
         markup.row(itembtna, itembtnd)
 
         spl = message.text.split()
