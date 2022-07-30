@@ -302,9 +302,9 @@ def sendme(message: Message):
         itembtnQ = types.KeyboardButton('?')
         markup.row(itembtna, itembtnd, itembtnQ)
         bot.send_message(message.from_user.id, "Choose one letter:", reply_markup=markup)
-        bot.reply_to(message.chat.id, 'any')
+        bot.reply_to(message, 'any')
         if message.text == 'd':
-            bot.send_message(message.chat.id, 'you --- try d ')
+            bot.send_message(message, 'you --- try d ')
         spl = message.text.split()
         if len(spl) > 1:
             if 'all' in spl[1]:
