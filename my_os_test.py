@@ -74,6 +74,7 @@ def check_local_data_base():
     print('\nTAB NAME:::',tab_name)
     for item in tab_name:
         if 'USER' not in item:
+            print('ITEM:::::::::::::', item)
             local_sql.execute("""
                 CREATE TABLE USER (
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
