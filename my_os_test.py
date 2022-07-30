@@ -6,13 +6,12 @@
 телеграмм бот для мониторинга системы 'ban'
 команды бота - описание:
 start - ps axf|grep python3
-up_log - update_log
+log - any log
 netstat - netstat 22 port
 info - user info
-bot_modul_update - подгрузка модулей
 tiker_report_status - report_status
 allrestart - old process killed, make git pull and start new
-sendmefile * - send file
+sendmefile - send file
 
 
 command:
@@ -146,13 +145,13 @@ def menu(message: Message):
 def update_log_status(message: Message):
     if check_for_access(message):
         markup = types.ReplyKeyboardMarkup()
-        itembtna = types.KeyboardButton('/log all')
+        itembtna = types.KeyboardButton('/log update')
         itembtnd = types.KeyboardButton('/log d')
         markup.row(itembtna, itembtnd)
 
         spl = message.text.split()
         if len(spl) > 1:
-            if 'all' in spl[1]:
+            if 'update' in spl[1]:
                 mess = os.popen('tail -19 /root/update-sql.log').read()
                 if len(mess) > 4000:
                     mess = mess[-2000:]
