@@ -167,7 +167,7 @@ def user_info(message: Message):
     if check_for_access(message):
         log_contact = f'id:[{message.from_user.id}] first_name [{message.from_user.first_name}]'
         print(log_contact)
-        bot.send_message(message.chat.id, message)
+        bot.send_message(message.chat.id, message.from_user)
     else:
         bot.send_message(message.chat.id, 'нет инфы')
 
