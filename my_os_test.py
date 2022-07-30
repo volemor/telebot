@@ -263,7 +263,7 @@ def sendmefile(message: Message):
 
         markup.row(itembtna, itembtnd, itembtnQ, itembtnTeh)
 
-        # bot.send_message(message.from_user.id, "Choose one letter:", reply_markup=markup)
+        bot.send_message(message.from_user.id, "Choose one letter:", reply_markup=markup)
 
         spl = message.text.split()
         if len(spl) > 1:
