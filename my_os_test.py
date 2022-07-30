@@ -145,10 +145,21 @@ def menu(message: Message):
 @bot.message_handler(commands=['up_log'])
 def update_log_status(message: Message):
     if check_for_access(message):
-        mess = os.popen('tail -19 /root/update-sql.log').read()
-        if len(mess) > 4000:
-            mess = mess[-2000:]
-        bot.send_message(message.chat.id, mess)
+        markup = types.ReplyKeyboardMarkup()
+        itembtna = types.KeyboardButton('/up_log all')
+        itembtnd = types.KeyboardButton('/up_log d')
+        markup.row(itembtna, itembtnd)
+
+        spl = message.text.split()
+        if len(spl) > 1:
+            if 'all' in spl[1]:
+                mess = os.popen('tail -19 /root/update-sql.log').read()
+                if len(mess) > 4000:
+                    mess = mess[-2000:]
+                bot.send_message(message.chat.id, mess)
+            elif 'd' in spl[1]:
+                bot.send_message(message.chat.id, 'new -- func...')
+
     else:
         bot.send_message(message.chat.id, 'все ок')
 
