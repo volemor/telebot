@@ -25,6 +25,8 @@ info - user info
 """
 
 import os
+from typing import Literal
+
 import telebot
 from telebot.types import Message
 from telebot import types
@@ -34,8 +36,10 @@ import datetime
 from sqlalchemy import create_engine
 from my_os_test_config import *
 import sqlite3
+
 db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 import pandas as pd
+from pydantic import BaseModel, Field
 
 if os.name == 'nt':
     proj_path = 'W:\\My_Python\\stock_update'
@@ -44,7 +48,6 @@ if os.name == 'nt':
 else:
     proj_path = '/mnt/1T/opt/gig/My_Python/stock_update/'
     print("start from LINUX")
-
 
 me = singleton.SingleInstance()  ### проверка на работу и запуск альтернативной версии скрипта - чтоб не задвоялась
 
@@ -63,6 +66,7 @@ for index in my_list:
 bot = telebot.TeleBot(telegramm_token)
 """ бот для запуска на линуксе и мониторинге """
 
+
 def check_local_data_base():
     """
     add local db for users if not open
@@ -70,7 +74,8 @@ def check_local_data_base():
     """
 
     local_sql = sqlite3.connect('local_sql.db')
-    tab_name = {j for i in local_sql.execute("select name from sqlite_master where type = 'table';").fetchall() for j in i}
+    tab_name = {j for i in local_sql.execute("select name from sqlite_master where type = 'table';").fetchall() for j in
+                i}
     # print('\nTAB NAME:::',tab_name)
 
     if 'USER' not in tab_name:
@@ -79,13 +84,14 @@ def check_local_data_base():
             CREATE TABLE USER (
                 id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER,
-                user_group TEXT
+                user_group TEXT,
+                user_activation INTEGER
             );
         """)
 
         sql = 'INSERT INTO USER (user_id, user_group) values( ?, ?)'
         data = [
-            (my_access_list[0], 'root'), (my_access_list[1], 'root') ,
+            (my_access_list[0], 'root'), (my_access_list[1], 'root'),
             (subscriber_list[2], 'subscriber'), (subscriber_list[3], 'subscriber')
         ]
         with local_sql:
@@ -97,9 +103,6 @@ def check_local_data_base():
     #
     #     mess_add = local_sql.execute('select * from USER;').fetchall()
     #     bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
-
-
-
 
 
 check_local_data_base()
@@ -133,9 +136,6 @@ def save_user_info(message):
 def save_exeption(exeption):
     with open('telebot_ex.log', 'a') as file_log:
         file_log.write(f'[{datetime.datetime.today()}]' + str(exeption) + '\n')
-
-
-
 
 
 def save_name_to_log(message, modul: str):
@@ -175,6 +175,39 @@ def start(message: Message):
         bot.send_message(message.chat.id, my_process_py)
     else:
         bot.send_message(message.chat.id, 'запуск прошел успешно')
+
+
+@bot.message_handler(commands=['user'])
+def add_user(message: Message):
+    if check_for_access(message):
+        # markup = types.ReplyKeyboardMarkup()
+        class Add_User(BaseModel):
+            user_id: int
+            user_group: Literal['root', 'subscriber']
+            user_activation: bool
+
+        mess_split = message.text.split()
+        local_sql = sqlite3.connect('local_sql.db')
+        if len(mess_split) > 1:
+            try:
+                user_data = {'user_id': int(mess_split[1].strip("-")),
+                             'user_group': str(mess_split[2].strip("-")),
+                             'user_activation': True}
+                # print(Add_User(user_data))
+            except:
+                bot.send_message(message.chat.id, 'не верный формат')
+
+            if 'root' in user_data['user_group']:
+                local_sql.execute(f'INSERT INTO USER (user_id, user_group) values({user_data["user_id"]}, root)')
+                bot.send_message(message.chat.id, '/add_user root')
+            if 'subscriber' in user_data['user_group']:
+                local_sql.execute(f'INSERT INTO USER (user_id, user_group) values({user_data["user_id"]}, subscriber)')
+                bot.send_message(message.chat.id, '/add_user subscriber')
+
+
+        # bot.send_message(message.chat.id, '/add_user -name- -group-')
+        # itembtna = types.KeyboardButton('/add_user -name- -group-')
+        # markup.row(itembtna)
 
 
 @bot.message_handler(commands=['menu'])

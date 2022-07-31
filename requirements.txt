@@ -3,3 +3,4 @@ sqlalchemy
 pyTelegramBotAPI
 tendo
 # telegram-menu
+pydantic
