@@ -39,7 +39,7 @@ import sqlite3
 
 db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 import pandas as pd
-from pydantic import BaseModel, Field
+# from pydantic import BaseModel, Field
 
 if os.name == 'nt':
     proj_path = 'W:\\My_Python\\stock_update'
@@ -185,7 +185,7 @@ def add_user(message: Message):
         #     user_id: int
         #     user_group: Literal['root', 'subscriber']
         #     user_activation: bool
-
+        # /user -11111- -subscriber-
         mess_split = message.text.split()
         local_sql = sqlite3.connect('local_sql.db')
         if len(mess_split) > 1:
@@ -194,9 +194,10 @@ def add_user(message: Message):
                              'user_group': str(mess_split[2].strip("-")),
                              'user_activation': True}
                 # print(Add_User(user_data))
+
             except:
                 bot.send_message(message.chat.id, 'не верный формат')
-
+            print(user_data)
             if 'root' in user_data['user_group']:
                 local_sql.execute(f'INSERT INTO USER (user_id, user_group) values({user_data["user_id"]}, root)')
                 bot.send_message(message.chat.id, '/add_user root')
