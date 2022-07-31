@@ -185,7 +185,7 @@ def add_user(message: Message):
         #     user_id: int
         #     user_group: Literal['root', 'subscriber']
         #     user_activation: bool
-        # /user -11111- -subscriber-
+        # /user -12221111- -subscriber-
         mess_split = message.text.split()
 
         local_sql = sqlite3.connect('local_sql.db')
@@ -206,7 +206,7 @@ def add_user(message: Message):
             if 'subscriber' in user_data['user_group']:
                 local_sql.execute(f'INSERT INTO USER (user_id, user_group) values({user_data["user_id"]}, subscriber)')
                 bot.send_message(message.from_user.id, '/add_user subscriber')
-
+            print(local_sql.execute('select * from USER ;'))
 
         # bot.send_message(message.chat.id, '/add_user -name- -group-')
         # itembtna = types.KeyboardButton('/add_user -name- -group-')
