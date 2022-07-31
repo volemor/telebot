@@ -25,7 +25,7 @@ info - user info
 """
 
 import os
-from typing import Literal
+# from typing import Literal
 
 import telebot
 from telebot.types import Message
@@ -181,10 +181,10 @@ def start(message: Message):
 def add_user(message: Message):
     if check_for_access(message):
         # markup = types.ReplyKeyboardMarkup()
-        class Add_User(BaseModel):
-            user_id: int
-            user_group: Literal['root', 'subscriber']
-            user_activation: bool
+        # class Add_User(BaseModel):
+        #     user_id: int
+        #     user_group: Literal['root', 'subscriber']
+        #     user_activation: bool
 
         mess_split = message.text.split()
         local_sql = sqlite3.connect('local_sql.db')
