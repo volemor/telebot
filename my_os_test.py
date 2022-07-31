@@ -198,14 +198,14 @@ def add_user(message: Message):
                 print(user_data)
                 # print(Add_User(user_data))
             except:
-                bot.send_message(message.chat.id, 'не верный формат')
+                bot.send_message(message.from_user.id, 'не верный формат')
 
             if 'root' in user_data['user_group']:
                 local_sql.execute(f'INSERT INTO USER (user_id, user_group) values({user_data["user_id"]}, root)')
-                bot.send_message(message.chat.id, '/add_user root')
+                bot.send_message(message.from_user.id, '/add_user root')
             if 'subscriber' in user_data['user_group']:
                 local_sql.execute(f'INSERT INTO USER (user_id, user_group) values({user_data["user_id"]}, subscriber)')
-                bot.send_message(message.chat.id, '/add_user subscriber')
+                bot.send_message(message.from_user.id, '/add_user subscriber')
 
 
         # bot.send_message(message.chat.id, '/add_user -name- -group-')
@@ -267,14 +267,14 @@ def run_some(message: Message):
         if len(spl) > 1:
             if 'update' in spl[1]:
                 # os.popen('cd /root/my_py/stock_update/ && nohup python3 update_sql.py &')
-                bot.send_message(message.chat.id, 'stock update start')
+                bot.send_message(message.from_user.id, 'stock update start')
             elif 'calc' in spl[1]:
                 # os.popen('/root/st_report_calc_start.bat')
-                bot.send_message(message.chat.id, 'stock report calc start')
+                bot.send_message(message.from_user.id, 'stock report calc start')
         else:
             bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
     else:
-        bot.send_message(message.chat.id, 'все ок')
+        bot.send_message(message.from_user.id, 'все ок')
 
 
 # ln -s /root/my_py/stock_update/update.log /root/update-sql.log
