@@ -1,7 +1,6 @@
 import sqlite3
 import time
 
-from telegram_menu import BaseMessage, TelegramMenuSession, NavigationHandler
 
 from telebot import types
 from telebot.types import Message
