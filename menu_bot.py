@@ -1,4 +1,5 @@
 import sqlite3
+import time
 
 from telegram_menu import BaseMessage, TelegramMenuSession, NavigationHandler
 
@@ -278,4 +279,11 @@ def user(message: Message):
 # It defines how many buttons are fit on each row before continuing on the next row.
 
 
-bot.polling(none_stop=True)
+
+while True:
+    try:
+        bot.polling(none_stop=True)
+    except Exception as _ex:
+        pass
+    time.sleep(100)
+

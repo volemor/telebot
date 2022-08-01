@@ -3,3 +3,4 @@
 /divTelebot_config.py
 /my_os_test_config.py
 *.db
+/secret_for_menu.py
