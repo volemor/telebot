@@ -25,8 +25,6 @@ info - user info
 """
 
 import os
-# from typing import Literal
-
 import telebot
 from telebot.types import Message
 from telebot import types
@@ -134,13 +132,13 @@ def start(message: Message):
         bot.send_message(message.chat.id, 'запуск прошел успешно')
 
 
-@bot.message_handler(commands=['menu'])
-def menu(message: Message):
-    # save_user_info(message)
-    if check_for_access(message):
-        bot.send_message(message.chat.id, 'new menu')
-    else:
-        bot.send_message(message.chat.id, 'menu')
+# @bot.message_handler(commands=['menu'])
+# def menu(message: Message):
+#     # save_user_info(message)
+#     if check_for_access(message):
+#         bot.send_message(message.chat.id, 'new menu')
+#     else:
+#         bot.send_message(message.chat.id, 'menu')
 
 
 @bot.message_handler(commands=['log'])
@@ -179,10 +177,12 @@ def log_status(message: Message):
 @bot.message_handler(commands=['run'])
 def run_some(message: Message):
     if check_for_access(message):
-        markup = types.ReplyKeyboardMarkup()
+        markup = types.ReplyKeyboardMarkup(row_width=2)
         itembtna = types.KeyboardButton('/run update')
         itembtnd = types.KeyboardButton('/run calc')
+        itembtne = types.KeyboardButton('/start')
         markup.row(itembtna, itembtnd)
+        markup.row(itembtne)
         spl = message.text.split()
         if len(spl) > 1:
             if 'update' in spl[1]:
@@ -251,7 +251,7 @@ def user_info(message: Message):
 
 
 @bot.message_handler(commands=['tiker_report_status'])
-def user_info(message: Message):
+def tiker_report_status(message: Message):
     my_mes = 'tiker_report_status \n'
     if check_for_access(message):
         sql_message = 'Select tiker, max(day_close) as max_day_close, market from tiker_report group by tiker;'
