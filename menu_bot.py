@@ -105,7 +105,7 @@ def start(message: Message):
             markup.row(itembtnc, itembtnd)
             markup.row(itembtnf, itembtne)
             bot.send_message(message.from_user.id, "you are ROOT: \nChoose one letter:", reply_markup=markup)
-            # bot.send_message(message.chat.id, my_process_py)
+            # bot.send_message(message.from_user.id, my_process_py)
         else:
             markup = types.ReplyKeyboardMarkup(row_width=2)
             itembtna = types.KeyboardButton('/user_info')
@@ -379,7 +379,7 @@ def user(message: Message):
             bot.send_message(message.from_user.id,
                              'group:\nroot\nsubscriber\n'
                              )
-        # bot.send_message(message.chat.id, '/add_user -name- -group-')
+        # bot.send_message(message.from_user.id, '/add_user -name- -group-')
         # itembtna = types.KeyboardButton('/add_user -name- -group-')
         # markup.row(itembtna)
 
@@ -400,22 +400,22 @@ def log_status(message: Message):
                     mess = os.popen('tail -19 /root/update-sql.log').read()
                     if len(mess) > 4000:
                         mess = mess[-2000:]
-                    bot.send_message(message.chat.id, mess)
+                    bot.send_message(message.from_user.id, mess)
                 except FileExistsError:
-                    bot.send_message(message.chat.id, 'File not found')
+                    bot.send_message(message.from_user.id, 'File not found')
 
             elif 'calc' in spl[1]:
                 try:
                     mess = os.popen('tail -19 /root/my_py/stock_rep_calc/log/make_from_sql.log').read()
                     if len(mess) > 4000:
                         mess = mess[-2000:]
-                    bot.send_message(message.chat.id, mess)
+                    bot.send_message(message.from_user.id, mess)
                 except FileExistsError:
-                    bot.send_message(message.chat.id, 'File not found')
+                    bot.send_message(message.from_user.id, 'File not found')
         else:
             bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
     else:
-        bot.send_message(message.chat.id, 'все ок')
+        bot.send_message(message.from_user.id, 'все ок')
 
 
 # Using the ReplyKeyboardMarkup class
