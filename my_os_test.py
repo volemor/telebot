@@ -39,6 +39,7 @@ import sqlite3
 
 db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 import pandas as pd
+
 # from pydantic import BaseModel, Field
 
 if os.name == 'nt':
@@ -51,61 +52,20 @@ else:
 
 me = singleton.SingleInstance()  ### проверка на работу и запуск альтернативной версии скрипта - чтоб не задвоялась
 
-processoutput = os.popen("ps -axf").read()
-my_list = processoutput.split('\n')
-count_my_prog = 0
-for index in my_list:
-    if 'python3' in index:
-        # my_process_py += index + '\n'
-        if 'my_os_test.py' in index:
-            count_my_prog += 1
-        if count_my_prog == 2:
-            print('programm allready run!!!')
-            exit()
+# processoutput = os.popen("ps -axf").read()
+# my_list = processoutput.split('\n')
+# count_my_prog = 0
+# for index in my_list:
+#     if 'python3' in index:
+#         # my_process_py += index + '\n'
+#         if 'my_os_test.py' in index:
+#             count_my_prog += 1
+#         if count_my_prog == 2:
+#             print('programm allready run!!!')
+#             exit()
 
 bot = telebot.TeleBot(telegramm_token)
 """ бот для запуска на линуксе и мониторинге """
-
-
-def check_local_data_base():
-    """
-    add local db for users if not open
-    :return:
-    """
-
-    local_sql = sqlite3.connect('local_sql.db')
-    tab_name = {j for i in local_sql.execute("select name from sqlite_master where type = 'table';").fetchall() for j in
-                i}
-    # print('\nTAB NAME:::',tab_name)
-
-    if 'USER' not in tab_name:
-        print('ITEM:::::::::::::', item)
-        local_sql.execute("""
-            CREATE TABLE USER (
-                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER,
-                user_group TEXT,
-                user_activation INTEGER
-            );
-        """)
-
-        sql = 'INSERT INTO USER (user_id, user_group) values( ?, ?)'
-        data = [
-            (my_access_list[0], 'root'), (my_access_list[1], 'root'),
-            (subscriber_list[2], 'subscriber'), (subscriber_list[3], 'subscriber')
-        ]
-        with local_sql:
-            local_sql.executemany(sql, data)
-        bot.send_message(my_access_list[0], f'CREATE TABLE USER in db')
-        mess_add = local_sql.execute('select * from USER;').fetchall()
-        bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
-    # else:
-    #
-    #     mess_add = local_sql.execute('select * from USER;').fetchall()
-    #     bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
-
-
-check_local_data_base()
 
 
 def my_monitor():
@@ -151,9 +111,6 @@ def check_for_access(message):
         return False
 
 
-# check_for_access(message.from_user.id)
-
-
 def check_for_subscriber_list(message, modul: str):
     if str(message.from_user.id) in subscriber_list:
         save_name_to_log(message, modul)
@@ -175,42 +132,6 @@ def start(message: Message):
         bot.send_message(message.chat.id, my_process_py)
     else:
         bot.send_message(message.chat.id, 'запуск прошел успешно')
-
-
-@bot.message_handler(commands=['user'])
-def add_user(message: Message):
-    if check_for_access(message):
-        # markup = types.ReplyKeyboardMarkup()
-        # class Add_User(BaseModel):
-        #     user_id: int
-        #     user_group: Literal['root', 'subscriber']
-        #     user_activation: bool
-        # /user -12221111- -subscriber-
-        mess_split = message.text.split()
-
-        local_sql = sqlite3.connect('local_sql.db')
-        if len(mess_split) > 1:
-            try:
-                print(mess_split)
-                user_data = {'user_id': int(mess_split[1].strip("-")),
-                             'user_group': str(mess_split[2].strip("-")),
-                             'user_activation': True}
-                print(user_data)
-                # print(Add_User(user_data))
-            except:
-                bot.send_message(message.from_user.id, 'не верный формат')
-
-            if 'root' in user_data['user_group']:
-                local_sql.execute(f'INSERT INTO USER (user_id, user_group) values({user_data["user_id"]}, root)')
-                bot.send_message(message.from_user.id, '/add_user root')
-            if 'subscriber' in user_data['user_group']:
-                local_sql.execute(f'INSERT INTO USER (user_id, user_group) values({user_data["user_id"]}, subscriber)')
-                bot.send_message(message.from_user.id, '/add_user subscriber')
-            print(local_sql.execute('select * from USER ;'))
-
-        # bot.send_message(message.chat.id, '/add_user -name- -group-')
-        # itembtna = types.KeyboardButton('/add_user -name- -group-')
-        # markup.row(itembtna)
 
 
 @bot.message_handler(commands=['menu'])
@@ -262,7 +183,6 @@ def run_some(message: Message):
         itembtna = types.KeyboardButton('/run update')
         itembtnd = types.KeyboardButton('/run calc')
         markup.row(itembtna, itembtnd)
-
         spl = message.text.split()
         if len(spl) > 1:
             if 'update' in spl[1]:
