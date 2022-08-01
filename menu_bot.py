@@ -38,7 +38,7 @@ def check_local_data_base():
 
         sql = 'INSERT INTO USER (user_id, user_group) values( ?, ?)'
         data = [
-            (my_access_list[0], 'root'), (my_access_list[1], 'root'),
+            (my_access_list[0], 'root'),
             (subscriber_list[2], 'subscriber'), (subscriber_list[3], 'subscriber')
         ]
         with local_sql:
