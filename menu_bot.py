@@ -1,11 +1,13 @@
 import sqlite3
 import time
-
-
 from telebot import types
 from telebot.types import Message
 import telebot
-from secret_for_menu import API_KEY, my_access_list, subscriber_list
+from secret_for_menu import API_KEY, my_access_list, subscriber_list, sql_login
+import pandas as pd
+from sqlalchemy import create_engine
+
+db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 
 db_NAME = 'local_sql__menu_bot.db'
 my_access_set = set()
@@ -32,7 +34,9 @@ def check_local_data_base():
                 id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                 user_id INTEGER,
                 user_group TEXT,
-                user_activation INTEGER
+                user_activation INTEGER, 
+                user_date_act timestamp
+                
             );
         """)
 
@@ -65,7 +69,7 @@ def check_for_access(message):
             my_access_set.add(item[0])
         print('my A _set::', my_access_set)
 
-    if str(message.from_user.id) in my_access_list:
+    if message.from_user.id in my_access_set:
         # save_name_to_log(message, 'access')
         return True
     else:
@@ -89,25 +93,27 @@ def check_for_subscribers(user_id: int):
 def start(message: Message):
     if check_for_subscribers(message.from_user.id):
         bot.send_message(message.from_user.id, "start BOT ")
-
         if check_for_access(message):
             markup = types.ReplyKeyboardMarkup(row_width=2)
             itembtna = types.KeyboardButton('/user')
             itembtnv = types.KeyboardButton('/user list')
-            itembtnc = types.KeyboardButton('/report_status')
+            itembtnc = types.KeyboardButton('/tiker_report_status')
             itembtnd = types.KeyboardButton('/sendmefile')
-            itembtne = types.KeyboardButton('some 4')
+            itembtnf = types.KeyboardButton('/log')
+            itembtne = types.KeyboardButton('/start')
             markup.row(itembtna, itembtnv)
             markup.row(itembtnc, itembtnd)
-            markup.row(itembtne)
+            markup.row(itembtnf, itembtne)
             bot.send_message(message.from_user.id, "you are ROOT: \nChoose one letter:", reply_markup=markup)
             # bot.send_message(message.chat.id, my_process_py)
         else:
             markup = types.ReplyKeyboardMarkup(row_width=2)
             itembtna = types.KeyboardButton('/user_info')
             itembtnb = types.KeyboardButton('/sendmefile')
-            itembtnc = types.KeyboardButton('/report_status')
+            itembtnc = types.KeyboardButton('/tiker_report_status')
+            itembtne = types.KeyboardButton('/start')
             markup.row(itembtna, itembtnb, itembtnc)
+            markup.row(itembtne)
             bot.send_message(message.from_user.id, "Choose one letter:", reply_markup=markup)
     else:
         itembtna = types.KeyboardButton('/sendmessage')
@@ -117,20 +123,122 @@ def start(message: Message):
                          reply_markup=markup)
 
 
+@bot.message_handler(commands=['tiker_report_status'])
+def tiker_report_status(message: Message):
+    my_mes = 'tiker_report_status \n'
+    if check_for_subscribers(message.from_user.id):
+        sql_message = 'Select tiker, max(day_close) as max_day_close, market from tiker_report group by tiker;'
+        df = pd.read_sql(sql_message, con=db_connection)
+        for market in df['market'].unique():
+            statistik_list = pd.Series({c: df[df['market'] == market][c].unique() for c in df})
+            statistik_list['max_day_close'].sort()
+            # my_mes += ''.join([f'len max_day_close [{len(statistik_list[1])}]\n'])
+            my_mes += ''.join([
+                f"[{market}][{statistik_list.iat[1][-2]}][{len(df[(df['max_day_close'] == statistik_list.iat[1][-2]) & (df['market'] == market)]['tiker'])}]\n"])
+            my_mes += ''.join([
+                f"[{market}][{statistik_list.iat[1][-1]}][{len(df[(df['max_day_close'] == statistik_list.iat[1][-1]) & (df['market'] == market)]['tiker'])}]\n"])
+        bot.send_message(message.from_user.id, my_mes)
+    # else:
+    #     bot.send_message(message.from_user.id, 'нет инфы')
+
+
+@bot.message_handler(commands=['sendmefile'])
+def sendmefile(message: Message):
+    '''send any file'''
+    path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
+
+    def sender(key: str):
+        dir_list = os.listdir(path_for_telebot)
+        otchet_all = [name for name in dir_list if key in name]
+        otchet_all.sort()
+        if len(otchet_all) > 0:
+            with open(path_for_telebot + otchet_all[-1], 'rb') as file:
+                bot.send_document(message.from_user.id, file)
+        else:
+            bot.send_message(message.from_user.id, 'file not found.. sorry')
+
+    if check_for_subscribers(message.from_user.id):
+        markup = types.ReplyKeyboardMarkup()
+        itembtna = types.KeyboardButton('/sendmefile all')
+        itembtnd = types.KeyboardButton('/sendmefile d')
+        itembtnQ = types.KeyboardButton('/sendmefile ?')
+        itembtnTeh = types.KeyboardButton('/sendmefile teh_out')
+        itembtne = types.KeyboardButton('/start')
+        markup.row(itembtna, itembtnd)
+        markup.row(itembtnQ, itembtnTeh)
+        markup.row(itembtne)
+        spl = message.text.split()
+        if len(spl) > 1:
+            if 'all' in spl[1]:
+                sender('all')
+            elif 'd' in spl[1]:
+                sender('d')
+            elif 't' in spl[1]:
+                sender('teh_out')
+            elif '?' in spl[1]:
+                dir_list = os.listdir(path_for_telebot)
+                otchet_all = [name for name in dir_list if 'all' in name]
+                otchet_d = [name for name in dir_list if 'd' in name]
+                otchet_teh = [name for name in dir_list if 'teh_out' in name]
+                otchet_d.sort()
+                otchet_all.sort()
+                otchet_teh.sort()
+                bot.send_message(message.from_user.id,
+                                 f'last file:\n{otchet_d[-1]}\n{otchet_all[-1]}\n{otchet_teh[-1]}')
+        else:
+            bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
+    # else:
+    #     bot.send_message(message.from_user.id, f'Пожалуй тебя нет в списках.. id ={message.from_user.id}')
+    # from my_os_test_config import subscriber_list
+
+
 @bot.message_handler(commands=['sendmessage'])
 def send_message_to_root(message: Message):
-    bot.send_message(439255451, f'user[{message.from_user.id}] wants to join\n ')
-    bot.send_message(439255451, f'{message.from_user}')
+    bot.send_message(my_access_list[0], f'user[{message.from_user.id}] wants to join\n ')
+    bot.send_message(my_access_list[0], f'{message.from_user}')
     markup = types.ReplyKeyboardMarkup(row_width=2)
     itembtna = types.KeyboardButton(f'/user add -{message.from_user.id}- -subscriber-')
     itembtnb = types.KeyboardButton(f'/start')
     markup.row(itembtna)
     markup.row(itembtnb)
-    bot.send_message(439255451, f'/user add -{message.from_user.id}- -subscriber-', reply_markup=markup)
+    bot.send_message(my_access_list[0], f'/user add -{message.from_user.id}- -subscriber-', reply_markup=markup)
 
 
 @bot.message_handler(commands=['user'])
 def user(message: Message):
+    def generate_com_button(command_list: list, us_id: int):
+        itembtn = list()
+        markup = types.ReplyKeyboardMarkup(row_width=1)
+        for item in command_list:
+            itembtn.append(types.KeyboardButton(f'/{item} -{us_id}-'))
+        # for item in range(len(itembtn)):
+        if len(itembtn) <= 3:
+            markup.row(*itembtn[:])
+            markup.row(types.KeyboardButton('/user list'), types.KeyboardButton('/user'))
+        else:
+            markup.row(*itembtn[:3])
+            markup.row(*itembtn[3:])
+            markup.row(types.KeyboardButton('/user list'), types.KeyboardButton('/user'))
+        bot.send_message(my_access_list[0], f'choose one:', reply_markup=markup)
+
+    def generate_user_list(com, user_id_list: list):
+        itembtn = list()
+        markup = types.ReplyKeyboardMarkup(row_width=2)
+        for item in user_id_list:
+            itembtn.append(types.KeyboardButton(f'/user {com} -{item}-'))
+        print('item_len--', len(itembtn))
+        if len(itembtn) < 3:
+            markup.row(*itembtn[:])
+            markup.row(types.KeyboardButton('/user list'), types.KeyboardButton('/user'))
+        else:
+            for item in range(0, len(itembtn), 2):
+                markup.row(*itembtn[item:item + 2])
+
+            # markup.row(*itembtn[3:])
+            markup.row(types.KeyboardButton('/user list'), types.KeyboardButton('/user'))
+
+        bot.send_message(my_access_list[0], f'choose one:', reply_markup=markup)
+
     if check_for_access(message):
         markup = types.ReplyKeyboardMarkup()
         global subscriber_set_db
@@ -140,13 +248,12 @@ def user(message: Message):
         #     user_group: Literal['root', 'subscriber']
         #     user_activation: bool
 
-        # /user add -1222111112- -subscriber-
+        # /user add -1324248- -subscriber-
         # /user add -12212312- -root-
         # /user add -1111f243- -subscriber-
         # /user list
         # /user remove -1114f12-
         # /user activate -1111h3227-
-
         def check_format_uid(u_id: str):
             try:
                 u_id_int = int(u_id)
@@ -191,6 +298,7 @@ def user(message: Message):
                 # local_sql.commit()
                 U_list = local_sql.execute('select * from USER ;').fetchall()
                 # print(U_list)
+                user_list = []
                 mess_loc_s, mess_loc_r = '', ''
                 count_s, count_r = 0, 0
                 for item in U_list:
@@ -199,6 +307,7 @@ def user(message: Message):
                             x = True
                         else:
                             x = False
+                        user_list.append(item[1])
                         mess_loc_s += f'  id:{item[1]} activ:{x}\n'
                         count_s += 1
                     if 'root' == item[2]:
@@ -207,10 +316,16 @@ def user(message: Message):
                         else:
                             x = False
                         mess_loc_r += f'  id:{item[1]} activ:{x}\n'
-
+                print('user_list ---', user_list)
+                generate_user_list('command', user_list)
                 bot.send_message(message.from_user.id,
                                  f'Subscriber [{count_s}]:\n{mess_loc_s}\n Root:[{count_r}]:\n{mess_loc_r}')
 
+            if 'command' in mess_split[1]:
+                u_id = check_format_uid(mess_split[2].strip('-'))
+                if u_id:
+                    if check_for_subscribers(u_id):
+                        generate_com_button(['user remove', 'user activate', 'user deactivate'], u_id)
             if 'remove' in mess_split[1]:
                 u_id = check_format_uid(mess_split[2].strip('-'))
                 if u_id:
@@ -256,16 +371,51 @@ def user(message: Message):
             markup = types.ReplyKeyboardMarkup(row_width=2)
             itembtna = types.KeyboardButton(f'/user list')
             itembtnb = types.KeyboardButton(f'/start')
-            markup.row(itembtna,itembtnb)
+            markup.row(itembtna, itembtnb)
             bot.send_message(message.from_user.id,
-                             'You can: \n user add -id- -group-,\n user list,\n user remove -id-\n user activate -id-\n user deactivate -id-', reply_markup=markup
+                             'You can: \n user add -id- -group-,\n user list,\n user remove -id-\n user activate -id-\n user deactivate -id-',
+                             reply_markup=markup
                              )
             bot.send_message(message.from_user.id,
-                         'group:\nroot\nsubscriber\n'
-                         )
+                             'group:\nroot\nsubscriber\n'
+                             )
         # bot.send_message(message.chat.id, '/add_user -name- -group-')
         # itembtna = types.KeyboardButton('/add_user -name- -group-')
         # markup.row(itembtna)
+
+
+@bot.message_handler(commands=['log'])
+def log_status(message: Message):
+    if check_for_access(message):
+        markup = types.ReplyKeyboardMarkup(row_width=2)
+        itembtna = types.KeyboardButton('/log update')
+        itembtnd = types.KeyboardButton('/log calc')
+        itembtne = types.KeyboardButton('/start')
+        markup.row(itembtna, itembtnd)
+        markup.row(itembtne)
+        spl = message.text.split()
+        if len(spl) > 1:
+            if 'update' in spl[1]:
+                try:
+                    mess = os.popen('tail -19 /root/update-sql.log').read()
+                    if len(mess) > 4000:
+                        mess = mess[-2000:]
+                    bot.send_message(message.chat.id, mess)
+                except FileExistsError:
+                    bot.send_message(message.chat.id, 'File not found')
+
+            elif 'calc' in spl[1]:
+                try:
+                    mess = os.popen('tail -19 /root/my_py/stock_rep_calc/log/make_from_sql.log').read()
+                    if len(mess) > 4000:
+                        mess = mess[-2000:]
+                    bot.send_message(message.chat.id, mess)
+                except FileExistsError:
+                    bot.send_message(message.chat.id, 'File not found')
+        else:
+            bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
+    else:
+        bot.send_message(message.chat.id, 'все ок')
 
 
 # Using the ReplyKeyboardMarkup class
@@ -278,11 +428,9 @@ def user(message: Message):
 # It defines how many buttons are fit on each row before continuing on the next row.
 
 
-
 while True:
     try:
         bot.polling(none_stop=True)
     except Exception as _ex:
         pass
     time.sleep(100)
-
