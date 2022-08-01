@@ -1,5 +1,5 @@
 import sqlite3
-import time
+import time, os
 from telebot import types
 from telebot.types import Message
 import telebot
