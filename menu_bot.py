@@ -166,7 +166,16 @@ def start(message: Message):
     if check_for_access(message):
         mess_split = message.text.split()
         local_sql = sqlite3.connect(db_NAME)
-
+        markup = types.ReplyKeyboardMarkup(row_width=2)
+        itembtna = types.KeyboardButton(f'/pending_user list')
+        itembtnb = types.KeyboardButton(f'/pending_user command')
+        itembtnc = types.KeyboardButton(f'/pending_user info')
+        itembtnd = types.KeyboardButton(f'/pending_user block')
+        itembtne = types.KeyboardButton(f'/pending_user')
+        itembtnf = types.KeyboardButton(f'/start')
+        markup.row(itembtna, itembtnb)
+        markup.row(itembtnc, itembtnd)
+        markup.row(itembtne, itembtnf)
         def generate_user_list(com, user_id_list: list):
             itembtn = list()
             markup = types.ReplyKeyboardMarkup(row_width=2)
