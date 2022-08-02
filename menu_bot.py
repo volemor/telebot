@@ -70,10 +70,7 @@ def check_local_data_base():
                 """)
         local_sql.commit()
         bot.send_message(my_access_list[0], f'CREATE TABLE BLOKED_USER in db')
-    # else:
-    #
-    #     mess_add = local_sql.execute('select * from USER;').fetchall()
-    #     bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
+
 
 
 check_local_data_base()
@@ -96,7 +93,6 @@ def check_for_access(message: Message):
         print('my A _set::', my_access_set)
 
     if message.from_user.id in my_access_set:
-        # save_name_to_log(message, 'access')
         return True
     else:
         return False
@@ -250,8 +246,7 @@ def tiker_report_status(message: Message):
             my_mes += ''.join([
                 f"[{market}][{statistik_list.iat[1][-1]}][{len(df[(df['max_day_close'] == statistik_list.iat[1][-1]) & (df['market'] == market)]['tiker'])}]\n"])
         bot.send_message(message.from_user.id, my_mes)
-    # else:
-    #     bot.send_message(message.from_user.id, 'нет инфы')
+
 
 
 @bot.message_handler(commands=['sendmefile'])
@@ -516,9 +511,6 @@ def user(message: Message):
             bot.send_message(message.from_user.id,
                              'group:\nroot\nsubscriber\n'
                              )
-        # bot.send_message(message.from_user.id, '/add_user -name- -group-')
-        # itembtna = types.KeyboardButton('/add_user -name- -group-')
-        # markup.row(itembtna)
 
 
 @bot.message_handler(commands=['log'])
@@ -554,15 +546,6 @@ def log_status(message: Message):
     else:
         bot.send_message(message.from_user.id, 'все ок')
 
-
-# Using the ReplyKeyboardMarkup class
-# It's constructor can take the following optional arguments:
-# - resize_keyboard: True/False (default False)
-# - one_time_keyboard: True/False (default False)
-# - selective: True/False (default False)
-# - row_width: integer (default 3)
-# row_width is used in combination with the add() function.
-# It defines how many buttons are fit on each row before continuing on the next row.
 
 
 while True:
