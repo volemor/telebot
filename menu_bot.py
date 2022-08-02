@@ -176,6 +176,8 @@ def start(message: Message):
         markup.row(itembtna, itembtnb)
         markup.row(itembtnc, itembtnd)
         markup.row(itembtne, itembtnf)
+        bot.send_message(message.from_user.id, "Choose one letter:", reply_markup=markup)
+
         def generate_user_list(com, user_id_list: list):
             itembtn = list()
             markup = types.ReplyKeyboardMarkup(row_width=2)
