@@ -27,7 +27,7 @@ def check_local_data_base():
     local_sql = sqlite3.connect(db_NAME)
     tab_name = {j for i in local_sql.execute("select name from sqlite_master where type = 'table';").fetchall() for j in
                 i}
-    # print('\nTAB NAME:::',tab_name)
+    print('\nTAB NAME:::',tab_name)
     if 'USER' not in tab_name:
         local_sql.execute("""
             CREATE TABLE USER (
