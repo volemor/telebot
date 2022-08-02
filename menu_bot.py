@@ -77,13 +77,15 @@ def check_local_data_base():
 
 
 check_local_data_base()
-def remove_from_bloked_list(user_id:int):
+
+
+def remove_from_bloked_list(user_id: int):
     local_sql = sqlite3.connect(db_NAME)
     local_sql.execute(f'delete from BLOKED_USER where user_id="{user_id}";')
     local_sql.commit()
 
 
-def check_for_access(message:Message):
+def check_for_access(message: Message):
     global my_access_set
     if len(my_access_set) == 0:
         my_access_set.add(int(my_access_list[0]))
@@ -194,33 +196,35 @@ def start(message: Message):
 
         if 'list' in mess_split[1]:
             pending_user_list = [i[1] for i in local_sql.execute('select * from PENDING_USER;').fetchall()]
-            if len(pending_user_list) !=0:
+            if len(pending_user_list) != 0:
                 bot.send_message(my_access_list[0], f'pending_user_list len:{len(pending_user_list)}')
                 generate_user_list('command', pending_user_list)
             else:
                 bot.send_message(my_access_list[0], f'pending_user_list is empty..')
         if 'command' in mess_split[1]:
-            markup = types.ReplyKeyboardMarkup(row_width=2)
-            markup.row(types.KeyboardButton(f'/pending_user info {mess_split[2]}'))
-            markup.row(types.KeyboardButton(f'/user add -{mess_split[2]}- -subscriber-'),
-                       types.KeyboardButton(f'/pending_user block {mess_split[2]}'))
-            markup.row(types.KeyboardButton('/pending_user list'), types.KeyboardButton('/start'))
-            bot.send_message(my_access_list[0], f'choose one:', reply_markup=markup)
+            if len(mess_split) > 2:
+                markup = types.ReplyKeyboardMarkup(row_width=2)
+                markup.row(types.KeyboardButton(f'/pending_user info {mess_split[2]}'))
+                markup.row(types.KeyboardButton(f'/user add -{mess_split[2]}- -subscriber-'),
+                           types.KeyboardButton(f'/pending_user block {mess_split[2]}'))
+                markup.row(types.KeyboardButton('/pending_user list'), types.KeyboardButton('/start'))
+                bot.send_message(my_access_list[0], f'choose one:', reply_markup=markup)
         if 'info' in mess_split[1]:
-            bot.send_message(my_access_list[0], f'{message.from_user}')
-
-            markup = types.ReplyKeyboardMarkup(row_width=2)
-            markup.row(types.KeyboardButton(f'/user add -{mess_split[2]}- -subscriber-'),
-                       types.KeyboardButton(f'/pending_user block {mess_split[2]}'))
-            markup.row(types.KeyboardButton('/pending_user list'), types.KeyboardButton('/start'))
-            bot.send_message(my_access_list[0], f'choose one:', reply_markup=markup)
+            if len(mess_split) > 2:
+                bot.send_message(my_access_list[0], f'{mess_split[2]}')
+                markup = types.ReplyKeyboardMarkup(row_width=2)
+                markup.row(types.KeyboardButton(f'/user add -{mess_split[2]}- -subscriber-'),
+                           types.KeyboardButton(f'/pending_user block {mess_split[2]}'))
+                markup.row(types.KeyboardButton('/pending_user list'), types.KeyboardButton('/start'))
+                bot.send_message(my_access_list[0], f'choose one:', reply_markup=markup)
         if 'block' in mess_split[1]:
-            local_sql.execute(
-                f'INSERT INTO BLOKED_USER (user_id, user_date_request) values({mess_split[2]}, {datetime.datetime.today()})')
-            local_sql.commit()
-            local_sql.execute(f'delete from PENDING_USER where user_id="{mess_split[2]}";')
-            local_sql.commit()
-            bot.send_message(my_access_list[0], f'user bloked {mess_split[2]}')
+            if len(mess_split) > 2:
+                local_sql.execute(
+                    f'INSERT INTO BLOKED_USER (user_id, user_date_request) values({mess_split[2]}, {datetime.datetime.today()})')
+                local_sql.commit()
+                local_sql.execute(f'delete from PENDING_USER where user_id="{mess_split[2]}";')
+                local_sql.commit()
+                bot.send_message(my_access_list[0], f'user bloked {mess_split[2]}')
 
 
 @bot.message_handler(commands=['tiker_report_status'])
