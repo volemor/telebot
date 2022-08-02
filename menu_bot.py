@@ -1,3 +1,4 @@
+import datetime
 import sqlite3
 import time, os
 from telebot import types
@@ -27,7 +28,6 @@ def check_local_data_base():
     tab_name = {j for i in local_sql.execute("select name from sqlite_master where type = 'table';").fetchall() for j in
                 i}
     # print('\nTAB NAME:::',tab_name)
-
     if 'USER' not in tab_name:
         local_sql.execute("""
             CREATE TABLE USER (
@@ -40,10 +40,11 @@ def check_local_data_base():
             );
         """)
 
-        sql = 'INSERT INTO USER (user_id, user_group) values( ?, ?)'
+        sql = 'INSERT INTO USER (user_id, user_group,user_activation, user_date_act) values( ?, ?, ?, ?)'
         data = [
-            (my_access_list[0], 'root'),
-            (subscriber_list[2], 'subscriber'), (subscriber_list[3], 'subscriber')
+            (my_access_list[0], 'root', 1, datetime.datetime.strptime('2030/08/10', '%Y/%m/%d')),
+            (subscriber_list[2], 'subscriber', 1, datetime.datetime.strptime('2023/08/10', '%Y/%m/%d')),
+            (subscriber_list[3], 'subscriber', 1, datetime.datetime.strptime('2023/08/10', '%Y/%m/%d'))
         ]
         with local_sql:
             local_sql.executemany(sql, data)
@@ -87,6 +88,17 @@ def check_for_subscribers(user_id: int):
         return True
     else:
         return False
+
+
+@bot.message_handler(commands=['restart'])
+def restart(message: Message):
+    if check_for_access(message):
+        spl = message.text.split()
+        if spl[1] == 'base':
+            local_sql = sqlite3.connect(db_NAME)
+            local_sql.execute('drop table USER;').fetchall()
+            local_sql.commit()
+            bot.send_message(my_access_list[0], f'USER table droped:')
 
 
 @bot.message_handler(commands=['start'])
