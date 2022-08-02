@@ -195,20 +195,28 @@ def start(message: Message):
             bot.send_message(my_access_list[0], f'choose one:', reply_markup=markup)
 
         if 'list' in mess_split[1]:
+
             pending_user_list = [i[1] for i in local_sql.execute('select * from PENDING_USER;').fetchall()]
             if len(pending_user_list) != 0:
                 bot.send_message(my_access_list[0], f'pending_user_list len:{len(pending_user_list)}')
+                mess_loc = 'list of pending_user:\n'
+                for item in pending_user_list:
+                    mess_loc += f"-{item}\n"
+                bot.send_message(my_access_list[0], mess_loc)
+
                 generate_user_list('command', pending_user_list)
             else:
                 bot.send_message(my_access_list[0], f'pending_user_list is empty..')
         if 'command' in mess_split[1]:
             if len(mess_split) > 2:
+                print('pending command', len(mess_split))
                 markup = types.ReplyKeyboardMarkup(row_width=2)
                 markup.row(types.KeyboardButton(f'/pending_user info {mess_split[2]}'))
                 markup.row(types.KeyboardButton(f'/user add -{mess_split[2]}- -subscriber-'),
                            types.KeyboardButton(f'/pending_user block {mess_split[2]}'))
                 markup.row(types.KeyboardButton('/pending_user list'), types.KeyboardButton('/start'))
                 bot.send_message(my_access_list[0], f'choose one:', reply_markup=markup)
+
         if 'info' in mess_split[1]:
             if len(mess_split) > 2:
                 bot.send_message(my_access_list[0], f'{mess_split[2]}')
@@ -253,7 +261,7 @@ def sendmefile(message: Message):
 
     def sendmefile_log(id: int, name: str):
         with open('sendmefile.log', 'a') as file:
-            file.writelines(f"[{datetime.datetime.now()}] [{id}] [{name}]")
+            file.writelines(f"[{datetime.datetime.now()}] [{id}] [{name}]\n")
 
     def sender(key: str):
         dir_list = os.listdir(path_for_telebot)
