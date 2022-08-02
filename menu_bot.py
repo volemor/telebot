@@ -51,6 +51,17 @@ def check_local_data_base():
         bot.send_message(my_access_list[0], f'CREATE TABLE USER in db')
         mess_add = local_sql.execute('select * from USER;').fetchall()
         bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
+    if "PENDING_USER"  not in tab_name:
+        local_sql.execute("""
+                    CREATE TABLE PENDING_USER (
+                        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        user_id INTEGER,              
+                        user_date_request timestamp
+                    );
+                """)
+        local_sql.commit()
+        bot.send_message(my_access_list[0], f'CREATE TABLE PENDING_USER in db')
+
     # else:
     #
     #     mess_add = local_sql.execute('select * from USER;').fetchall()
@@ -101,6 +112,7 @@ def restart(message: Message):
             bot.send_message(my_access_list[0], f'USER table droped:')
 
 
+
 @bot.message_handler(commands=['start'])
 def start(message: Message):
     if check_for_subscribers(message.from_user.id):
@@ -108,7 +120,7 @@ def start(message: Message):
         if check_for_access(message):
             markup = types.ReplyKeyboardMarkup(row_width=2)
             itembtna = types.KeyboardButton('/user')
-            itembtnv = types.KeyboardButton('/user list')
+            itembtnv = types.KeyboardButton('/pending_user')
             itembtnc = types.KeyboardButton('/tiker_report_status')
             itembtnd = types.KeyboardButton('/sendmefile')
             itembtnf = types.KeyboardButton('/log')
@@ -133,6 +145,11 @@ def start(message: Message):
         markup.row(itembtna)
         bot.send_message(message.from_user.id, "start BOT.\nYou not in subscriber list\nYou can send message\n",
                          reply_markup=markup)
+
+@bot.message_handler(commands=['pending_user'])
+def start(message: Message):
+    if check_for_access(message):
+
 
 
 @bot.message_handler(commands=['tiker_report_status'])
@@ -159,12 +176,16 @@ def sendmefile(message: Message):
     '''send any file'''
     path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
 
+    def sendmefile_log(id: int, name: str):
+        with open('sendmefile.log', 'a') as file:
+            file.writelines(f"[{datetime.datetime.now()}] [{id}] [{name}]")
     def sender(key: str):
         dir_list = os.listdir(path_for_telebot)
         otchet_all = [name for name in dir_list if key in name]
         otchet_all.sort()
         if len(otchet_all) > 0:
             with open(path_for_telebot + otchet_all[-1], 'rb') as file:
+                sendmefile_log(message.from_user.id,otchet_all[-1] )
                 bot.send_document(message.from_user.id, file)
         else:
             bot.send_message(message.from_user.id, 'file not found.. sorry')
@@ -396,6 +417,7 @@ def user(message: Message):
         # markup.row(itembtna)
 
 
+
 @bot.message_handler(commands=['log'])
 def log_status(message: Message):
     if check_for_access(message):
@@ -428,6 +450,9 @@ def log_status(message: Message):
             bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
     else:
         bot.send_message(message.from_user.id, 'все ок')
+
+
+
 
 
 # Using the ReplyKeyboardMarkup class
