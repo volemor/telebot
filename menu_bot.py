@@ -194,7 +194,11 @@ def start(message: Message):
 
         if 'list' in mess_split[1]:
             pending_user_list = [i[1] for i in local_sql.execute('select * from PENDING_USER;').fetchall()]
-            generate_user_list('command', pending_user_list)
+            if len(pending_user_list) !=0:
+                bot.send_message(my_access_list[0], f'pending_user_list len:{len(pending_user_list)}')
+                generate_user_list('command', pending_user_list)
+            else:
+                bot.send_message(my_access_list[0], f'pending_user_list is empty..')
         if 'command' in mess_split[1]:
             markup = types.ReplyKeyboardMarkup(row_width=2)
             markup.row(types.KeyboardButton(f'/pending_user info {mess_split[2]}'))
