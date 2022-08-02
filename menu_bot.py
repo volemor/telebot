@@ -36,7 +36,6 @@ def check_local_data_base():
                 user_group TEXT,
                 user_activation INTEGER, 
                 user_date_act timestamp
-                
             );
         """)
 
@@ -51,7 +50,7 @@ def check_local_data_base():
         bot.send_message(my_access_list[0], f'CREATE TABLE USER in db')
         mess_add = local_sql.execute('select * from USER;').fetchall()
         bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
-    if "PENDING_USER"  not in tab_name:
+    if "PENDING_USER" not in tab_name:
         local_sql.execute("""
                     CREATE TABLE PENDING_USER (
                         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -61,7 +60,16 @@ def check_local_data_base():
                 """)
         local_sql.commit()
         bot.send_message(my_access_list[0], f'CREATE TABLE PENDING_USER in db')
-
+    if "BLOKED_USER" not in tab_name:
+        local_sql.execute("""
+                    CREATE TABLE BLOKED_USER (
+                        id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                        user_id INTEGER,              
+                        user_date_request timestamp
+                    );
+                """)
+        local_sql.commit()
+        bot.send_message(my_access_list[0], f'CREATE TABLE BLOKED_USER in db')
     # else:
     #
     #     mess_add = local_sql.execute('select * from USER;').fetchall()
@@ -69,9 +77,13 @@ def check_local_data_base():
 
 
 check_local_data_base()
+def remove_from_bloked_list(user_id:int):
+    local_sql = sqlite3.connect(db_NAME)
+    local_sql.execute(f'delete from BLOKED_USER where user_id="{user_id}";')
+    local_sql.commit()
 
 
-def check_for_access(message):
+def check_for_access(message:Message):
     global my_access_set
     if len(my_access_set) == 0:
         my_access_set.add(int(my_access_list[0]))
@@ -105,12 +117,11 @@ def check_for_subscribers(user_id: int):
 def restart(message: Message):
     if check_for_access(message):
         spl = message.text.split()
-        if spl[1] == 'base':
+        if spl[1] == 'USER':
             local_sql = sqlite3.connect(db_NAME)
             local_sql.execute('drop table USER;').fetchall()
             local_sql.commit()
             bot.send_message(my_access_list[0], f'USER table droped:')
-
 
 
 @bot.message_handler(commands=['start'])
@@ -140,16 +151,61 @@ def start(message: Message):
             markup.row(itembtne)
             bot.send_message(message.from_user.id, "Choose one letter:", reply_markup=markup)
     else:
-        itembtna = types.KeyboardButton('/sendmessage')
-        markup = types.ReplyKeyboardMarkup(row_width=2)
-        markup.row(itembtna)
-        bot.send_message(message.from_user.id, "start BOT.\nYou not in subscriber list\nYou can send message\n",
-                         reply_markup=markup)
+        local_sql = sqlite3.connect(db_NAME)
+        bloked_user_set = {i for i in local_sql.execute('select user_id from BLOKED_USER;').fetchall()}
+        if message.from_user.id not in bloked_user_set:
+            itembtna = types.KeyboardButton('/sendmessage')
+            markup = types.ReplyKeyboardMarkup(row_width=2)
+            markup.row(itembtna)
+            bot.send_message(message.from_user.id, "start BOT.\nYou not in subscriber list\nYou can send message\n",
+                             reply_markup=markup)
+
 
 @bot.message_handler(commands=['pending_user'])
 def start(message: Message):
     if check_for_access(message):
+        mess_split = message.text.split()
+        local_sql = sqlite3.connect(db_NAME)
 
+        def generate_user_list(com, user_id_list: list):
+            itembtn = list()
+            markup = types.ReplyKeyboardMarkup(row_width=2)
+            for item in user_id_list:
+                itembtn.append(types.KeyboardButton(f'/pending_user {com} {item}'))
+            print('item_len--', len(itembtn))
+            if len(itembtn) < 3:
+                markup.row(*itembtn[:])
+            else:
+                for item in range(0, len(itembtn), 2):
+                    markup.row(*itembtn[item:item + 2])
+            markup.row(types.KeyboardButton('/pending_user list'), types.KeyboardButton('/start'))
+            bot.send_message(my_access_list[0], f'choose one:', reply_markup=markup)
+
+        if 'list' in mess_split[1]:
+            pending_user_list = [i[1] for i in local_sql.execute('select * from PENDING_USER;').fetchall()]
+            generate_user_list('command', pending_user_list)
+        if 'command' in mess_split[1]:
+            markup = types.ReplyKeyboardMarkup(row_width=2)
+            markup.row(types.KeyboardButton(f'/pending_user info {mess_split[2]}'))
+            markup.row(types.KeyboardButton(f'/user add -{mess_split[2]}- -subscriber-'),
+                       types.KeyboardButton(f'/pending_user block {mess_split[2]}'))
+            markup.row(types.KeyboardButton('/pending_user list'), types.KeyboardButton('/start'))
+            bot.send_message(my_access_list[0], f'choose one:', reply_markup=markup)
+        if 'info' in mess_split[1]:
+            bot.send_message(my_access_list[0], f'{message.from_user}')
+
+            markup = types.ReplyKeyboardMarkup(row_width=2)
+            markup.row(types.KeyboardButton(f'/user add -{mess_split[2]}- -subscriber-'),
+                       types.KeyboardButton(f'/pending_user block {mess_split[2]}'))
+            markup.row(types.KeyboardButton('/pending_user list'), types.KeyboardButton('/start'))
+            bot.send_message(my_access_list[0], f'choose one:', reply_markup=markup)
+        if 'block' in mess_split[1]:
+            local_sql.execute(
+                f'INSERT INTO BLOKED_USER (user_id, user_date_request) values({mess_split[2]}, {datetime.datetime.today()})')
+            local_sql.commit()
+            local_sql.execute(f'delete from PENDING_USER where user_id="{mess_split[2]}";')
+            local_sql.commit()
+            bot.send_message(my_access_list[0], f'{message.from_user}')
 
 
 @bot.message_handler(commands=['tiker_report_status'])
@@ -179,13 +235,14 @@ def sendmefile(message: Message):
     def sendmefile_log(id: int, name: str):
         with open('sendmefile.log', 'a') as file:
             file.writelines(f"[{datetime.datetime.now()}] [{id}] [{name}]")
+
     def sender(key: str):
         dir_list = os.listdir(path_for_telebot)
         otchet_all = [name for name in dir_list if key in name]
         otchet_all.sort()
         if len(otchet_all) > 0:
             with open(path_for_telebot + otchet_all[-1], 'rb') as file:
-                sendmefile_log(message.from_user.id,otchet_all[-1] )
+                sendmefile_log(message.from_user.id, otchet_all[-1])
                 bot.send_document(message.from_user.id, file)
         else:
             bot.send_message(message.from_user.id, 'file not found.. sorry')
@@ -234,6 +291,15 @@ def send_message_to_root(message: Message):
     itembtnb = types.KeyboardButton(f'/start')
     markup.row(itembtna)
     markup.row(itembtnb)
+
+    def add_to_pending_user(user_id: int):
+        local_sql = sqlite3.connect(db_NAME)
+        local_sql.execute(
+            f'INSERT INTO PENDING_USER (user_id, user_date_request ) values("{user_id}","{datetime.datetime.now()}");')
+        local_sql.commit()
+        print('add user in PENDING_USER table')
+
+    add_to_pending_user(message.from_user.id)
     bot.send_message(my_access_list[0], f'/user add -{message.from_user.id}- -subscriber-', reply_markup=markup)
 
 
@@ -300,6 +366,12 @@ def user(message: Message):
         if len(mess_split) > 1:
             if 'add' in mess_split[1]:
                 u_id = check_format_uid(mess_split[2].strip('-'))
+
+                def check_in_pending_user(user_id):
+                    if user_id in {i[1] for i in local_sql.execute('select * from PENDING_USER;').fetchall()}:
+                        return True
+                    return False
+
                 if u_id:
                     if check_for_subscribers(u_id):
                         bot.send_message(message.from_user.id, f'- user allready in database')
@@ -309,15 +381,20 @@ def user(message: Message):
                                      'user_activation': True}
                         if 'root' in user_data['user_group']:
                             local_sql.execute(
-                                f'INSERT INTO USER (user_id, user_group,user_activation ) values({user_data["user_id"]}, "root", "1");')
+                                f'INSERT INTO USER (user_id, user_group,user_activation ) values("{user_data["user_id"]}", "root", "1");')
                             local_sql.commit()
                             bot.send_message(message.from_user.id, '-add_user root')
                             my_access_set.add(u_id)
                             subscriber_set_db.add(u_id)
                         elif 'subscriber' in user_data['user_group']:
                             local_sql.execute(
-                                f'INSERT INTO USER (user_id, user_group,user_activation) values({user_data["user_id"]}, "subscriber", "1");')
+                                f'INSERT INTO USER (user_id, user_group,user_activation) values("{user_data["user_id"]}", "subscriber", "1");')
                             local_sql.commit()
+
+                            if check_in_pending_user(u_id):
+                                local_sql.execute(f'delete from PENDING_USER where user_id="{u_id}";')
+                                local_sql.commit()
+
                             bot.send_message(message.from_user.id, '-add_user subscriber')
                             subscriber_set_db.add(u_id)
                         else:
@@ -417,7 +494,6 @@ def user(message: Message):
         # markup.row(itembtna)
 
 
-
 @bot.message_handler(commands=['log'])
 def log_status(message: Message):
     if check_for_access(message):
@@ -450,9 +526,6 @@ def log_status(message: Message):
             bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
     else:
         bot.send_message(message.from_user.id, 'все ок')
-
-
-
 
 
 # Using the ReplyKeyboardMarkup class
