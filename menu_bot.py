@@ -216,7 +216,7 @@ def start(message: Message):
             local_sql.commit()
             local_sql.execute(f'delete from PENDING_USER where user_id="{mess_split[2]}";')
             local_sql.commit()
-            bot.send_message(my_access_list[0], f'{message.from_user}')
+            bot.send_message(my_access_list[0], f'user bloked {mess_split[2]}')
 
 
 @bot.message_handler(commands=['tiker_report_status'])
