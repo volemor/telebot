@@ -71,8 +71,6 @@ def check_local_data_base():
         local_sql.commit()
         bot.send_message(my_access_list[0], f'CREATE TABLE BLOKED_USER in db')
 
-
-
 check_local_data_base()
 
 
@@ -105,6 +103,7 @@ def check_for_subscribers(user_id: int):
         subscriber_set_db = set(i[0] for i in local_sql.execute('select user_id from USER;').fetchall())
         #
         # print('sub_SET:::',subscriber_set_db)
+        subscriber_set_db.add(int(my_access_list[0]))
     if user_id in subscriber_set_db:
         return True
     else:
@@ -372,6 +371,7 @@ def user(message: Message):
         # /user add -1324248- -subscriber-
         # /user add -12212312- -root-
         # /user add -1111f243- -subscriber-
+        # /user add -439255451- -subscriber-
         # /user list
         # /user remove -1114f12-
         # /user activate -1111h3227-
@@ -519,8 +519,10 @@ def log_status(message: Message):
         markup = types.ReplyKeyboardMarkup(row_width=2)
         itembtna = types.KeyboardButton('/log update')
         itembtnd = types.KeyboardButton('/log calc')
+        itembtnf = types.KeyboardButton('/log sendmefile')
+
         itembtne = types.KeyboardButton('/start')
-        markup.row(itembtna, itembtnd)
+        markup.row(itembtna, itembtnd, itembtne)
         markup.row(itembtne)
         spl = message.text.split()
         if len(spl) > 1:
@@ -538,6 +540,15 @@ def log_status(message: Message):
                     mess = os.popen('tail -19 /root/my_py/stock_rep_calc/log/make_from_sql.log').read()
                     if len(mess) > 4000:
                         mess = mess[-2000:]
+                    bot.send_message(message.from_user.id, mess)
+                except FileExistsError:
+                    bot.send_message(message.from_user.id, 'File not found')
+            elif 'sendmefile' in spl[1]:
+                try:
+                    mess = os.popen('tail -7 /root/my_py/telebot/ban_monitor/sendmefile.log').read()
+                    if len(mess) > 4000:
+                        mess = mess[-2000:]
+
                     bot.send_message(message.from_user.id, mess)
                 except FileExistsError:
                     bot.send_message(message.from_user.id, 'File not found')
