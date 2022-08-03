@@ -522,7 +522,7 @@ def log_status(message: Message):
         itembtnf = types.KeyboardButton('/log sendmefile')
 
         itembtne = types.KeyboardButton('/start')
-        markup.row(itembtna, itembtnd, itembtne)
+        markup.row(itembtna, itembtnd, itembtnf)
         markup.row(itembtne)
         spl = message.text.split()
         if len(spl) > 1:
