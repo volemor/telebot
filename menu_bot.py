@@ -27,7 +27,7 @@ def check_local_data_base():
     local_sql = sqlite3.connect(db_NAME)
     tab_name = {j for i in local_sql.execute("select name from sqlite_master where type = 'table';").fetchall() for j in
                 i}
-    print('\nTAB NAME:::',tab_name)
+    print('\nTAB NAME:::', tab_name)
     if 'USER' not in tab_name:
         local_sql.execute("""
             CREATE TABLE USER (
@@ -70,6 +70,7 @@ def check_local_data_base():
                 """)
         local_sql.commit()
         bot.send_message(my_access_list[0], f'CREATE TABLE BLOKED_USER in db')
+
 
 check_local_data_base()
 
@@ -247,7 +248,6 @@ def tiker_report_status(message: Message):
         bot.send_message(message.from_user.id, my_mes)
 
 
-
 @bot.message_handler(commands=['sendmefile'])
 def sendmefile(message: Message):
     '''send any file'''
@@ -260,6 +260,7 @@ def sendmefile(message: Message):
     def sender(key: str):
         dir_list = os.listdir(path_for_telebot)
         otchet_all = [name for name in dir_list if key in name]
+
         otchet_all.sort()
         if len(otchet_all) > 0:
             with open(path_for_telebot + otchet_all[-1], 'rb') as file:
@@ -294,6 +295,14 @@ def sendmefile(message: Message):
                 otchet_d.sort()
                 otchet_all.sort()
                 otchet_teh.sort()
+
+                def file_list_len_control(file_list: list):
+                    if len(file_list) > 10:
+                        del_item = [item for item in file_list[:-10]]
+                        for item in del_item:
+                            os.remove(item)
+
+                file_list_len_control(otchet_d), file_list_len_control(otchet_teh), file_list_len_control(otchet_all)
                 bot.send_message(message.from_user.id,
                                  f'last file:\n{otchet_d[-1]}\n{otchet_all[-1]}\n{otchet_teh[-1]}')
         else:
@@ -556,7 +565,6 @@ def log_status(message: Message):
             bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
     else:
         bot.send_message(message.from_user.id, 'все ок')
-
 
 
 while True:
