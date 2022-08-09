@@ -300,6 +300,7 @@ def sendmefile(message: Message):
                     if len(file_list) > 10:
                         del_item = [item for item in file_list[:-10]]
                         for item in del_item:
+                            print(item)
                             os.remove(item)
 
                 file_list_len_control(otchet_d), file_list_len_control(otchet_teh), file_list_len_control(otchet_all)
