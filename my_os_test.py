@@ -221,8 +221,7 @@ def user_info(message: Message):
         log_contact = f'id:[{message.from_user.id}] first_name [{message.from_user.first_name}]'
         print(log_contact)
         bot.send_message(message.chat.id, message.from_user)
-    else:
-        bot.send_message(message.chat.id, 'нет инфы')
+
 
 
 # @bot.message_handler(commands=['bot_modul_update'])
@@ -265,8 +264,7 @@ def tiker_report_status(message: Message):
             my_mes += ''.join([
                 f"[{market}][{statistik_list.iat[1][-1]}][{len(df[(df['max_day_close'] == statistik_list.iat[1][-1]) & (df['market'] == market)]['tiker'])}]\n"])
         bot.send_message(message.chat.id, my_mes)
-    else:
-        bot.send_message(message.chat.id, 'нет инфы')
+
 
 
 # set.intersection()
