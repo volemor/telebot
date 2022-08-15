@@ -119,7 +119,7 @@ def restart(message: Message):
             local_sql = sqlite3.connect(db_NAME)
             local_sql.execute('drop table USER;').fetchall()
             local_sql.commit()
-            bot.send_message(my_access_list[0], f'USER table droped:')
+            bot.send_message(my_access_list[0], f'USER table droped..')
 
 
 @bot.message_handler(commands=['start'])
