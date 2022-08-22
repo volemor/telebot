@@ -212,7 +212,8 @@ def start(message: Message):
                            types.KeyboardButton(f'/pending_user block {mess_split[2]}'))
                 markup.row(types.KeyboardButton('/pending_user list'), types.KeyboardButton('/start'))
                 bot.send_message(my_access_list[0], f'choose one:', reply_markup=markup)
-
+            else:
+                bot.send_message(my_access_list[0], f'не верный формат')
         if 'info' in mess_split[1]:
             if len(mess_split) > 2:
                 bot.send_message(my_access_list[0], f'{mess_split[2]}')
@@ -221,6 +222,8 @@ def start(message: Message):
                            types.KeyboardButton(f'/pending_user block {mess_split[2]}'))
                 markup.row(types.KeyboardButton('/pending_user list'), types.KeyboardButton('/start'))
                 bot.send_message(my_access_list[0], f'choose one:', reply_markup=markup)
+            else:
+                bot.send_message(my_access_list[0], f'не верный формат')
         if 'block' in mess_split[1]:
             if len(mess_split) > 2:
                 local_sql.execute(
@@ -229,7 +232,8 @@ def start(message: Message):
                 local_sql.execute(f'delete from PENDING_USER where user_id="{mess_split[2]}";')
                 local_sql.commit()
                 bot.send_message(my_access_list[0], f'user bloked {mess_split[2]}')
-
+            else:
+                bot.send_message(my_access_list[0], f'не верный формат')
 
 @bot.message_handler(commands=['tiker_report_status'])
 def tiker_report_status(message: Message):
