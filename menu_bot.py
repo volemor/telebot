@@ -112,12 +112,12 @@ def check_for_subscribers(user_id: int):
 
 
 @bot.message_handler(commands=['restart'])
-def restart(message: Message):
+async def restart(message: Message):
     if check_for_access(message):
         spl = message.text.split()
         if spl[1] == 'USER':
             local_sql = sqlite3.connect(db_NAME)
-            local_sql.execute('drop table USER;').fetchall()
+            await local_sql.execute('drop table USER;').fetchall()
             local_sql.commit()
             bot.send_message(my_access_list[0], f'USER table droped..')
 
@@ -160,7 +160,7 @@ def start(message: Message):
 
 
 @bot.message_handler(commands=['pending_user'])
-def start(message: Message):
+async def start(message: Message):
     if check_for_access(message):
         mess_split = message.text.split()
         local_sql = sqlite3.connect(db_NAME)
@@ -192,7 +192,7 @@ def start(message: Message):
 
         if 'list' in mess_split[1]:
 
-            pending_user_list = [i[1] for i in local_sql.execute('select * from PENDING_USER;').fetchall()]
+            await pending_user_list = [i[1] for i in local_sql.execute('select * from PENDING_USER;').fetchall()]
             if len(pending_user_list) != 0:
                 bot.send_message(my_access_list[0], f'pending_user_list len:{len(pending_user_list)}')
                 mess_loc = 'list of pending_user:\n'
@@ -226,10 +226,10 @@ def start(message: Message):
                 bot.send_message(my_access_list[0], f'не верный формат')
         if 'block' in mess_split[1]:
             if len(mess_split) > 2:
-                local_sql.execute(
+                await local_sql.execute(
                     f'INSERT INTO BLOKED_USER (user_id, user_date_request) values({mess_split[2]}, {datetime.datetime.today()})')
                 local_sql.commit()
-                local_sql.execute(f'delete from PENDING_USER where user_id="{mess_split[2]}";')
+                await local_sql.execute(f'delete from PENDING_USER where user_id="{mess_split[2]}";')
                 local_sql.commit()
                 bot.send_message(my_access_list[0], f'user bloked {mess_split[2]}')
             else:
@@ -253,7 +253,7 @@ def tiker_report_status(message: Message):
 
 
 @bot.message_handler(commands=['sendmefile'])
-def sendmefile(message: Message):
+async def sendmefile(message: Message):
     '''send any file'''
     path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
 
@@ -261,7 +261,7 @@ def sendmefile(message: Message):
         with open('sendmefile.log', 'a') as file:
             file.writelines(f"[{datetime.datetime.now()}] [{id}] [{name}]\n")
 
-    def sender(key: str):
+    async def sender(key: str):
         dir_list = os.listdir(path_for_telebot)
         otchet_all = [name for name in dir_list if key in name]
 
@@ -269,7 +269,7 @@ def sendmefile(message: Message):
         if len(otchet_all) > 0:
             with open(path_for_telebot + otchet_all[-1], 'rb') as file:
                 sendmefile_log(message.from_user.id, otchet_all[-1])
-                bot.send_document(message.from_user.id, file)
+                await bot.send_document(message.from_user.id, file)
         else:
             bot.send_message(message.from_user.id, 'file not found.. sorry')
 
@@ -286,11 +286,11 @@ def sendmefile(message: Message):
         spl = message.text.split()
         if len(spl) > 1:
             if 'all' in spl[1]:
-                sender('all')
+                await sender('all')
             elif 'd' in spl[1]:
-                sender('d')
+                await sender('d')
             elif 't' in spl[1]:
-                sender('teh_out')
+                await sender('teh_out')
             elif '?' in spl[1]:
                 dir_list = os.listdir(path_for_telebot)
                 otchet_all = [name for name in dir_list if 'all' in name]
@@ -318,7 +318,7 @@ def sendmefile(message: Message):
 
 
 @bot.message_handler(commands=['sendmessage'])
-def send_message_to_root(message: Message):
+async def send_message_to_root(message: Message):
     bot.send_message(my_access_list[0], f'user[{message.from_user.id}] wants to join\n ')
     bot.send_message(my_access_list[0], f'{message.from_user}')
     markup = types.ReplyKeyboardMarkup(row_width=2)
@@ -327,9 +327,9 @@ def send_message_to_root(message: Message):
     markup.row(itembtna)
     markup.row(itembtnb)
 
-    def add_to_pending_user(user_id: int):
+    async def add_to_pending_user(user_id: int):
         local_sql = sqlite3.connect(db_NAME)
-        local_sql.execute(
+        await local_sql.execute(
             f'INSERT INTO PENDING_USER (user_id, user_date_request ) values("{user_id}","{datetime.datetime.now()}");')
         local_sql.commit()
         print('add user in PENDING_USER table')
@@ -339,7 +339,7 @@ def send_message_to_root(message: Message):
 
 
 @bot.message_handler(commands=['user'])
-def user(message: Message):
+async def user(message: Message):
     def generate_com_button(command_list: list, us_id: int):
         itembtn = list()
         markup = types.ReplyKeyboardMarkup(row_width=1)
@@ -416,19 +416,19 @@ def user(message: Message):
                                      'user_group': str(mess_split[3].strip("-")),
                                      'user_activation': True}
                         if 'root' in user_data['user_group']:
-                            local_sql.execute(
+                            await local_sql.execute(
                                 f'INSERT INTO USER (user_id, user_group,user_activation ) values("{user_data["user_id"]}", "root", "1");')
                             local_sql.commit()
                             bot.send_message(message.from_user.id, '-add_user root')
                             my_access_set.add(u_id)
                             subscriber_set_db.add(u_id)
                         elif 'subscriber' in user_data['user_group']:
-                            local_sql.execute(
+                            await local_sql.execute(
                                 f'INSERT INTO USER (user_id, user_group,user_activation) values("{user_data["user_id"]}", "subscriber", "1");')
                             local_sql.commit()
 
                             if check_in_pending_user(u_id):
-                                local_sql.execute(f'delete from PENDING_USER where user_id="{u_id}";')
+                                await local_sql.execute(f'delete from PENDING_USER where user_id="{u_id}";')
                                 local_sql.commit()
 
                             bot.send_message(message.from_user.id, '-add_user subscriber')
@@ -476,7 +476,7 @@ def user(message: Message):
                 u_id = check_format_uid(mess_split[2].strip('-'))
                 if u_id:
                     if check_for_subscribers(u_id):
-                        local_sql.execute(f'delete from USER where user_id="{u_id}"; ')
+                        await local_sql.execute(f'delete from USER where user_id="{u_id}"; ')
                         local_sql.commit()
                         bot.send_message(message.from_user.id, f'-user {u_id} removed')
                         subscriber_set_db.remove(u_id)
@@ -528,7 +528,7 @@ def user(message: Message):
 
 
 @bot.message_handler(commands=['log'])
-def log_status(message: Message):
+async def log_status(message: Message):
     if check_for_access(message):
         markup = types.ReplyKeyboardMarkup(row_width=2)
         itembtna = types.KeyboardButton('/log update')
@@ -542,16 +542,17 @@ def log_status(message: Message):
         if len(spl) > 1:
             if 'update' in spl[1]:
                 try:
-                    mess = os.popen('tail -19 /root/update-sql.log').read()
+                    await mess = os.popen('tail -19 /root/update-sql.log').read()
                     if len(mess) > 4000:
                         mess = mess[-2000:]
                     bot.send_message(message.from_user.id, mess)
                 except FileExistsError:
                     bot.send_message(message.from_user.id, 'File not found')
 
+
             elif 'calc' in spl[1]:
                 try:
-                    mess = os.popen('tail -19 /root/my_py/stock_rep_calc/log/make_from_sql.log').read()
+                    await mess = os.popen('tail -19 /root/my_py/stock_rep_calc/log/make_from_sql.log').read()
                     if len(mess) > 4000:
                         mess = mess[-2000:]
                     bot.send_message(message.from_user.id, mess)
@@ -559,7 +560,7 @@ def log_status(message: Message):
                     bot.send_message(message.from_user.id, 'File not found')
             elif 'sendmefile' in spl[1]:
                 try:
-                    mess = os.popen('tail -7 /root/my_py/telebot/ban_monitor/sendmefile.log').read()
+                    await mess = os.popen('tail -7 /root/my_py/telebot/ban_monitor/sendmefile.log').read()
                     if len(mess) > 4000:
                         mess = mess[-2000:]
 
