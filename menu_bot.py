@@ -235,6 +235,7 @@ async def start(message: Message):
             else:
                 bot.send_message(my_access_list[0], f'не верный формат')
 
+
 @bot.message_handler(commands=['tiker_report_status'])
 async def tiker_report_status(message: Message):
     my_mes = 'tiker_report_status \n'
@@ -305,7 +306,7 @@ async def sendmefile(message: Message):
                         del_item = [item for item in file_list[:-10]]
                         for item in del_item:
                             print(item)
-                            os.remove(path_for_telebot+item)
+                            os.remove(path_for_telebot + item)
 
                 file_list_len_control(otchet_d), file_list_len_control(otchet_teh), file_list_len_control(otchet_all)
                 bot.send_message(message.from_user.id,
