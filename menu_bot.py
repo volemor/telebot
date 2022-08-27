@@ -18,7 +18,7 @@ bot = telebot.TeleBot(API_KEY)
 print('START menu_bot')
 
 
-def check_local_data_base():
+async def check_local_data_base():
     """
     add local db for users if not open
     :return:
@@ -46,12 +46,12 @@ def check_local_data_base():
             (subscriber_list[3], 'subscriber', 1, datetime.datetime.strptime('2023/08/10', '%Y/%m/%d'))
         ]
         with local_sql:
-            local_sql.executemany(sql, data)
+            await local_sql.executemany(sql, data)
         bot.send_message(my_access_list[0], f'CREATE TABLE USER in db')
-        mess_add = local_sql.execute('select * from USER;').fetchall()
+        mess_add = await local_sql.execute('select * from USER;').fetchall()
         bot.send_message(my_access_list[0], f'USER in db:{mess_add}')
     if "PENDING_USER" not in tab_name:
-        local_sql.execute("""
+        await local_sql.execute("""
                     CREATE TABLE PENDING_USER (
                         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                         user_id INTEGER,              
@@ -61,7 +61,7 @@ def check_local_data_base():
         local_sql.commit()
         bot.send_message(my_access_list[0], f'CREATE TABLE PENDING_USER in db')
     if "BLOKED_USER" not in tab_name:
-        local_sql.execute("""
+        await local_sql.execute("""
                     CREATE TABLE BLOKED_USER (
                         id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                         user_id INTEGER,              
