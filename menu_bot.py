@@ -123,7 +123,7 @@ async def restart(message: Message):
 
 
 @bot.message_handler(commands=['start'])
-def start(message: Message):
+async def start(message: Message):
     if check_for_subscribers(message.from_user.id):
         bot.send_message(message.from_user.id, "start BOT ")
         if check_for_access(message):
@@ -137,7 +137,7 @@ def start(message: Message):
             markup.row(itembtna, itembtnv)
             markup.row(itembtnc, itembtnd)
             markup.row(itembtnf, itembtne)
-            bot.send_message(message.from_user.id, "you are ROOT: \nChoose one letter:", reply_markup=markup)
+            bot.send_message(message.from_user.id, "you are ROOT: \n", reply_markup=markup)
             # bot.send_message(message.from_user.id, my_process_py)
         else:
             markup = types.ReplyKeyboardMarkup(row_width=2)
@@ -236,11 +236,11 @@ async def start(message: Message):
                 bot.send_message(my_access_list[0], f'не верный формат')
 
 @bot.message_handler(commands=['tiker_report_status'])
-def tiker_report_status(message: Message):
+async def tiker_report_status(message: Message):
     my_mes = 'tiker_report_status \n'
     if check_for_subscribers(message.from_user.id):
         sql_message = 'Select tiker, max(day_close) as max_day_close, market from tiker_report group by tiker;'
-        df = pd.read_sql(sql_message, con=db_connection)
+        df = await pd.read_sql(sql_message, con=db_connection)
         for market in df['market'].unique():
             statistik_list = pd.Series({c: df[df['market'] == market][c].unique() for c in df})
             statistik_list['max_day_close'].sort()
