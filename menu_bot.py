@@ -13,6 +13,7 @@ db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 db_NAME = 'local_sql__menu_bot.db'
 my_access_set = set()
 subscriber_set_db = set()
+
 bot = telebot.TeleBot(API_KEY)
 
 print('START menu_bot')
