@@ -161,7 +161,7 @@ async def start(message: Message):
 
 
 @bot.message_handler(commands=['pending_user'])
-async def start(message: Message):
+async def pending(message: Message):
     if check_for_access(message):
         mess_split = message.text.split()
         local_sql = sqlite3.connect(db_NAME)
@@ -573,6 +573,19 @@ async def log_status(message: Message):
             bot.send_message(message.from_user.id, "Поконкретнее:", reply_markup=markup)
     else:
         bot.send_message(message.from_user.id, 'все ок')
+
+
+@bot.message_handler(commands=['run'])
+async def any_run(message:Message)
+    if check_for_access(message):
+        split_message = message.text.split()
+        if 'pull' in split_message[1].lower():
+            mess_loc = os.popen('/root/my_py/telebot/telebot git pull').read()
+            if len (mess_loc) >0:
+                bot.send_message(message.from_user.id, mess_loc.split('\n'))
+        elif 'pass' in split_message[1].lower():
+            pass
+
 
 
 while True:
