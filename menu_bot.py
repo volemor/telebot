@@ -580,7 +580,7 @@ async def any_run(message:Message)
     if check_for_access(message):
         split_message = message.text.split()
         if 'pull' in split_message[1].lower():
-            mess_loc = os.popen('/root/my_py/telebot/telebot git pull').read()
+            mess_loc = os.popen('/root/my_py/telebot/telebot/git pull').read()
             if len (mess_loc) >0:
                 bot.send_message(message.from_user.id, mess_loc.split('\n'))
         elif 'pass' in split_message[1].lower():
