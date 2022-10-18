@@ -544,7 +544,7 @@ async def log_status(message: Message):
         if len(spl) > 1:
             if 'update' in spl[1]:
                 try:
-                    await mess = os.popen('tail -19 /root/update-sql.log').read()
+                    mess = os.popen('tail -19 /root/update-sql.log').read()
                     if len(mess) > 4000:
                         mess = mess[-2000:]
                     bot.send_message(message.from_user.id, mess)
@@ -554,7 +554,7 @@ async def log_status(message: Message):
 
             elif 'calc' in spl[1]:
                 try:
-                    await mess = os.popen('tail -19 /root/my_py/stock_rep_calc/log/make_from_sql.log').read()
+                    mess = os.popen('tail -19 /root/my_py/stock_rep_calc/log/make_from_sql.log').read()
                     if len(mess) > 4000:
                         mess = mess[-2000:]
                     bot.send_message(message.from_user.id, mess)
@@ -562,7 +562,7 @@ async def log_status(message: Message):
                     bot.send_message(message.from_user.id, 'File not found')
             elif 'sendmefile' in spl[1]:
                 try:
-                    await mess = os.popen('tail -7 /root/my_py/telebot/ban_monitor/sendmefile.log').read()
+                    mess = os.popen('tail -7 /root/my_py/telebot/ban_monitor/sendmefile.log').read()
                     if len(mess) > 4000:
                         mess = mess[-2000:]
 
