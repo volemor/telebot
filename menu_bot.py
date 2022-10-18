@@ -576,7 +576,7 @@ async def log_status(message: Message):
 
 
 @bot.message_handler(commands=['run'])
-async def any_run(message: Message)
+async def any_run(message: Message):
     if check_for_access(message):
         split_message = message.text.split()
         if 'pull' in split_message[1].lower():
