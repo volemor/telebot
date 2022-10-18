@@ -7,6 +7,7 @@ import telebot
 from secret_for_menu import API_KEY, my_access_list, subscriber_list, sql_login
 import pandas as pd
 from sqlalchemy import create_engine
+import asyncio
 
 db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 
@@ -113,18 +114,18 @@ def check_for_subscribers(user_id: int):
 
 
 @bot.message_handler(commands=['restart'])
-async def restart(message: Message):
+def restart(message: Message):
     if check_for_access(message):
         spl = message.text.split()
         if spl[1] == 'USER':
             local_sql = sqlite3.connect(db_NAME)
-            await local_sql.execute('drop table USER;').fetchall()
+            local_sql.execute('drop table USER;').fetchall()
             local_sql.commit()
             bot.send_message(my_access_list[0], f'USER table droped..')
 
 
 @bot.message_handler(commands=['start'])
-async def start(message: Message):
+def start(message: Message):
     if check_for_subscribers(message.from_user.id):
         bot.send_message(message.from_user.id, "start BOT ")
         if check_for_access(message):
@@ -161,7 +162,7 @@ async def start(message: Message):
 
 
 @bot.message_handler(commands=['pending_user'])
-async def pending(message: Message):
+def pending(message: Message):
     if check_for_access(message):
         mess_split = message.text.split()
         local_sql = sqlite3.connect(db_NAME)
