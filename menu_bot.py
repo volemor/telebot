@@ -239,11 +239,11 @@ def pending(message: Message):
 
 
 @bot.message_handler(commands=['tiker_report_status'])
-async def tiker_report_status(message: Message):
+def tiker_report_status(message: Message):
     my_mes = 'tiker_report_status \n'
     if check_for_subscribers(message.from_user.id):
         sql_message = 'Select tiker, max(day_close) as max_day_close, market from tiker_report group by tiker;'
-        df = await pd.read_sql(sql_message, con=db_connection)
+        df = pd.read_sql(sql_message, con=db_connection)
         for market in df['market'].unique():
             statistik_list = pd.Series({c: df[df['market'] == market][c].unique() for c in df})
             statistik_list['max_day_close'].sort()
@@ -256,7 +256,7 @@ async def tiker_report_status(message: Message):
 
 
 @bot.message_handler(commands=['sendmefile'])
-async def sendmefile(message: Message):
+def sendmefile(message: Message):
     '''send any file'''
     path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
 
@@ -264,7 +264,7 @@ async def sendmefile(message: Message):
         with open('sendmefile.log', 'a') as file:
             file.writelines(f"[{datetime.datetime.now()}] [{id}] [{name}]\n")
 
-    async def sender(key: str):
+    def sender(key: str):
         dir_list = os.listdir(path_for_telebot)
         otchet_all = [name for name in dir_list if key in name]
 
@@ -272,7 +272,7 @@ async def sendmefile(message: Message):
         if len(otchet_all) > 0:
             with open(path_for_telebot + otchet_all[-1], 'rb') as file:
                 sendmefile_log(message.from_user.id, otchet_all[-1])
-                await bot.send_document(message.from_user.id, file)
+                bot.send_document(message.from_user.id, file)
         else:
             bot.send_message(message.from_user.id, 'file not found.. sorry')
 
@@ -289,11 +289,11 @@ async def sendmefile(message: Message):
         spl = message.text.split()
         if len(spl) > 1:
             if 'all' in spl[1]:
-                await sender('all')
+                sender('all')
             elif 'd' in spl[1]:
-                await sender('d')
+                sender('d')
             elif 't' in spl[1]:
-                await sender('teh_out')
+                sender('teh_out')
             elif '?' in spl[1]:
                 dir_list = os.listdir(path_for_telebot)
                 otchet_all = [name for name in dir_list if 'all' in name]
@@ -321,7 +321,7 @@ async def sendmefile(message: Message):
 
 
 @bot.message_handler(commands=['sendmessage'])
-async def send_message_to_root(message: Message):
+def send_message_to_root(message: Message):
     bot.send_message(my_access_list[0], f'user[{message.from_user.id}] wants to join\n ')
     bot.send_message(my_access_list[0], f'{message.from_user}')
     markup = types.ReplyKeyboardMarkup(row_width=2)
@@ -330,9 +330,9 @@ async def send_message_to_root(message: Message):
     markup.row(itembtna)
     markup.row(itembtnb)
 
-    async def add_to_pending_user(user_id: int):
+    def add_to_pending_user(user_id: int):
         local_sql = sqlite3.connect(db_NAME)
-        await local_sql.execute(
+        local_sql.execute(
             f'INSERT INTO PENDING_USER (user_id, user_date_request ) values("{user_id}","{datetime.datetime.now()}");')
         local_sql.commit()
         print('add user in PENDING_USER table')
@@ -342,7 +342,7 @@ async def send_message_to_root(message: Message):
 
 
 @bot.message_handler(commands=['user'])
-async def user(message: Message):
+def user(message: Message):
     def generate_com_button(command_list: list, us_id: int):
         itembtn = list()
         markup = types.ReplyKeyboardMarkup(row_width=1)
@@ -419,19 +419,19 @@ async def user(message: Message):
                                      'user_group': str(mess_split[3].strip("-")),
                                      'user_activation': True}
                         if 'root' in user_data['user_group']:
-                            await local_sql.execute(
+                            local_sql.execute(
                                 f'INSERT INTO USER (user_id, user_group,user_activation ) values("{user_data["user_id"]}", "root", "1");')
                             local_sql.commit()
                             bot.send_message(message.from_user.id, '-add_user root')
                             my_access_set.add(u_id)
                             subscriber_set_db.add(u_id)
                         elif 'subscriber' in user_data['user_group']:
-                            await local_sql.execute(
+                            local_sql.execute(
                                 f'INSERT INTO USER (user_id, user_group,user_activation) values("{user_data["user_id"]}", "subscriber", "1");')
                             local_sql.commit()
 
                             if check_in_pending_user(u_id):
-                                await local_sql.execute(f'delete from PENDING_USER where user_id="{u_id}";')
+                                local_sql.execute(f'delete from PENDING_USER where user_id="{u_id}";')
                                 local_sql.commit()
 
                             bot.send_message(message.from_user.id, '-add_user subscriber')
@@ -479,7 +479,7 @@ async def user(message: Message):
                 u_id = check_format_uid(mess_split[2].strip('-'))
                 if u_id:
                     if check_for_subscribers(u_id):
-                        await local_sql.execute(f'delete from USER where user_id="{u_id}"; ')
+                        local_sql.execute(f'delete from USER where user_id="{u_id}"; ')
                         local_sql.commit()
                         bot.send_message(message.from_user.id, f'-user {u_id} removed')
                         subscriber_set_db.remove(u_id)
@@ -531,7 +531,7 @@ async def user(message: Message):
 
 
 @bot.message_handler(commands=['log'])
-async def log_status(message: Message):
+def log_status(message: Message):
     if check_for_access(message):
         markup = types.ReplyKeyboardMarkup(row_width=2)
         itembtna = types.KeyboardButton('/log update')
@@ -577,7 +577,7 @@ async def log_status(message: Message):
 
 
 @bot.message_handler(commands=['run'])
-async def any_run(message: Message):
+def any_run(message: Message):
     if check_for_access(message):
         split_message = message.text.split()
         if 'pull' in split_message[1].lower():
