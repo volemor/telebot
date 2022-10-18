@@ -15,5 +15,5 @@ if run_process_name[0] not in com_line:
     print('Start 0')
 
 if run_process_name[1] not in com_line:
-    os.popen('nohup python3 /root/my_py/telebot/ban_monitor/menu_bot.py')
+    os.popen('nohup python3 /root/my_py/telebot/ban_monitor/menu_bot.py > /root/nohup.out')
     print('Start 1')
