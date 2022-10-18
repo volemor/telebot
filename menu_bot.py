@@ -193,7 +193,7 @@ async def pending(message: Message):
 
         if 'list' in mess_split[1]:
 
-            await pending_user_list = [i[1] for i in local_sql.execute('select * from PENDING_USER;').fetchall()]
+            pending_user_list = [i[1] for i in local_sql.execute('select * from PENDING_USER;').fetchall()]
             if len(pending_user_list) != 0:
                 bot.send_message(my_access_list[0], f'pending_user_list len:{len(pending_user_list)}')
                 mess_loc = 'list of pending_user:\n'
