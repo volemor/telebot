@@ -228,10 +228,10 @@ def pending(message: Message):
                 bot.send_message(my_access_list[0], f'не верный формат')
         if 'block' in mess_split[1]:
             if len(mess_split) > 2:
-                await local_sql.execute(
+                local_sql.execute(
                     f'INSERT INTO BLOKED_USER (user_id, user_date_request) values({mess_split[2]}, {datetime.datetime.today()})')
                 local_sql.commit()
-                await local_sql.execute(f'delete from PENDING_USER where user_id="{mess_split[2]}";')
+                local_sql.execute(f'delete from PENDING_USER where user_id="{mess_split[2]}";')
                 local_sql.commit()
                 bot.send_message(my_access_list[0], f'user bloked {mess_split[2]}')
             else:
