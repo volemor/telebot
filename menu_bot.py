@@ -117,11 +117,12 @@ def check_for_subscribers(user_id: int):
 def restart(message: Message):
     if check_for_access(message):
         spl = message.text.split()
-        if spl[1] == 'USER':
-            local_sql = sqlite3.connect(db_NAME)
-            local_sql.execute('drop table USER;').fetchall()
-            local_sql.commit()
-            bot.send_message(my_access_list[0], f'USER table droped..')
+        if len(spl)>1:
+            if spl[1] == 'USER':
+                local_sql = sqlite3.connect(db_NAME)
+                local_sql.execute('drop table USER;').fetchall()
+                local_sql.commit()
+                bot.send_message(my_access_list[0], f'USER table droped..')
 
 
 @bot.message_handler(commands=['start'])
@@ -582,12 +583,13 @@ def log_status(message: Message):
 def any_run(message: Message):
     if check_for_access(message):
         split_message = message.text.split()
-        if 'pull' in split_message[1].lower():
-            mess_loc = os.popen('cd /root/my_py/telebot/telebot && git pull').read()
-            if len(mess_loc) > 0:
-                bot.send_message(message.from_user.id, mess_loc.split('\n'))
-        elif 'pass' in split_message[1].lower():
-            pass
+        if len(split_message)>1:
+            if 'pull' in split_message[1].lower():
+                mess_loc = os.popen('cd /root/my_py/telebot/telebot && git pull').read()
+                if len(mess_loc) > 0:
+                    bot.send_message(message.from_user.id, mess_loc.split('\n'))
+            elif 'pass' in split_message[1].lower():
+                pass
 
 
 while True:
