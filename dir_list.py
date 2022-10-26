@@ -57,7 +57,6 @@ for item in dir_list:
     if "№122211-" in str(item) and ('Раздел 1' in root_dir[-1] or 'Раздел 6' in root_dir[-1]):
         root_dir_d[root_dir[-1]].append(item)
         local_dir_list.append(f'{root_dir[-1]}\\{item}')
-# exit()
 
 # for item in root_dir_d.keys():
 #     if 'Раздел 2.' in item:
