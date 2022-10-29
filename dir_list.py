@@ -31,10 +31,8 @@ for item in dir_list:
     if livel_key.get(3) in str(item):
         s_name = ("\\" + livel_name[2]) if len(livel_name[2]) > 0 else ""
         s_name1 = ("\\" + livel_name[1]) if len(livel_name[1]) > 0 else ""
-
         dir_name_list.append(f'{livel_name[0]}{s_name1}{s_name}\\{item}')
         os.makedirs(os.path.join(root_dir_name, dir_name_list[-1]), exist_ok=True)
-        # print(dir_name_list[-1])
 
 print(len(dir_name_list))
 
