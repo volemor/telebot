@@ -8,7 +8,6 @@ dir_list = df['shifr'].to_list()
 root_dir_name = 'LTK2'
 livel_key = {0: 'Раздел', 1: "Подраздел", 2: "Часть", 3: '№122211'}
 livel_name = {0: '', 1: "", 2: "", 3: '№122211'}
-
 dir_name_list = []
 
 for item in dir_list:
