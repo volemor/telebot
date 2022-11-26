@@ -517,8 +517,6 @@ def user(message: Message):
             # print('list::', U_list)
             print('Subscr_db:', subscriber_set_db)
             print('aCses_db:', my_access_set)
-
-
         else:
             markup = types.ReplyKeyboardMarkup(row_width=2)
             itembtna = types.KeyboardButton(f'/user list')
