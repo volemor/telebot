@@ -75,6 +75,10 @@ def remove_from_bloked_list(user_id: int):
 check_local_data_base()
 
 def add_user_to_pending_list(user_id:int):
+    local_sql = sqlite3.connect(__Conf_tkb.db_NAME)
+    local_sql.execute(f'INSERT INTO USER (user_id, user_date_request ) values("{user_id}", "{datetime.datetime.now().date()}");')
+    local_sql.commit()
+
     pass
 
 
@@ -439,9 +443,10 @@ def any_run(message: Message):
     elif check_for_pending_user(message):
         bot.send_message(message.from_user.id, 'вы в списке ожидания, скоро вас добавят')
     else:
-        pass
-    if "отправить заявку" in message.text:
-        pass
+        if "отправить заявку" in message.text:
+            add_user_to_pending_list(message.from_user.id)
+            bot.send_message(message.from_user.id, 'вы добавлены в список ожидания, ждите')
+
 
 
 
