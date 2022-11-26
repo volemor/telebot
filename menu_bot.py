@@ -7,7 +7,7 @@ import telebot
 from secret_for_menu import API_KEY, my_access_list, subscriber_list, sql_login
 import pandas as pd
 from sqlalchemy import create_engine
-import asyncio
+# import asyncio
 
 db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 
