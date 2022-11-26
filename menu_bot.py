@@ -463,6 +463,7 @@ def user(message: Message):
                         mess_loc_s += f'  id:{item[1]} activ:{x}\n'
                         count_s += 1
                     if 'root' == item[2]:
+                        count_r +=1
                         if item[3]:
                             x = True
                         else:
