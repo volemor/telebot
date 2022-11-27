@@ -4,10 +4,9 @@ import time, os
 from telebot import types
 from telebot.types import Message
 import telebot
-
 from secret_cheker import Conf_cheker as __Conf
-
 # from sqlalchemy import create_engine
+
 """
 пробуем сделать бота для группы 
 - 1)читать сообщения
@@ -15,17 +14,7 @@ from secret_cheker import Conf_cheker as __Conf
 3)загружать фото и видео..
 
     
-
 """
-
-# dddd= {"ok":true,"result":[{"update_id":447455777,
-# "message":{"message_id":23,
-#            "from":{"id":439255451,"is_bot":false,"first_name":"\u0412\u0438","last_name":"\u041c","username":"goloroj","language_code":"en"},
-#            "chat":{"id":-1001483597042,"title":"test_telega","type":"supergroup"},
-#            "date":1669496880,
-#            "document":{"file_name":"12.pdf","mime_type":"application/pdf","thumb":{"file_id":"AAMCAgADHQJYbeTyAAMXY4KAMHIIJQTNJpVaTyUUSv0lCoUAAq0lAAJ10hFIdGfMYnKudCABAAdtAAMrBA",
-# "file_unique_id":"AQADrSUAAnXSEUhy","file_size":1200,"width":226,"height":320},"file_id":"BQACAgIAAx0CWG3k8gADF2OCgDByCCUEzSaVWk8lFEr9JQqFAAKtJQACddIRSHRnzGJyrnQgKwQ",
-# "file_unique_id":"AgADrSUAAnXSEUg","file_size":190915},"caption":"sfsdfwer"}}]}
 
 bot = telebot.TeleBot(__Conf.API_KEY)
 
