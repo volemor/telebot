@@ -5,6 +5,7 @@ from telebot import types
 from telebot.types import Message
 import telebot
 from secret_cheker import Conf_cheker as __Conf
+
 # from sqlalchemy import create_engine
 
 """
@@ -94,15 +95,14 @@ def find_doc(message):
         # print('Doc::', message)
         print('Doc:->', message.document.file_name)
         test_dir = os.path.join(os.getcwd(), 'test')
-
-        bot.reply_to(message, f'файл {message.document.file_name}-загружен в папку: {test_dir}')
+        # bot.reply_to(message, f'файл {message.document.file_name}-загружен в папку: {test_dir}')
         # bot.delete_message(message.chat.id, message.message_id)
         file_info = bot.get_file(message.document.file_id)
         file = bot.download_file(file_info.file_path)
 
-        with open(f'{os.path.join(test_dir,message.document.file_name)}', 'wb') as file_name:
+        with open(f'{os.path.join(test_dir, message.document.file_name)}', 'wb') as file_name:
             file_name.write(file)
-
+        print(os.listdir(test_dir))
 
 
 while True:
