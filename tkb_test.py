@@ -5,8 +5,7 @@ from telebot import types
 from telebot.types import Message
 import telebot
 from secret_tkb import Conf_tkb as __Conf
-import pandas as pd
-from sqlalchemy import create_engine
+# from sqlalchemy import create_engine
 
 bot = telebot.TeleBot(__Conf.API_KEY)
 
@@ -66,13 +65,15 @@ def check_local_data_base():
         bot.send_message(__Conf.my_access_list[0], f'CREATE TABLE BLOKED_USER in db')
 
 
+check_local_data_base()
+
 def remove_from_bloked_list(user_id: int):
     local_sql = sqlite3.connect(__Conf.db_NAME)
     local_sql.execute(f'delete from BLOKED_USER where user_id="{user_id}";')
     local_sql.commit()
 
 
-check_local_data_base()
+
 
 
 def add_user_to_pending_list(user_id: int):
