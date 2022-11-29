@@ -102,7 +102,7 @@ check_local_data_base()
 @bot.message_handler(content_types='document')
 def copy_pdf(message: Message):
     if message.chat.id == __Conf.group_ID_in:
-        print('pdf:->', message)
+        # print('pdf:->', message)
         file_info = bot.get_file(message.document.file_id)
         file = bot.download_file(file_info.file_path)
         bot.send_document(__Conf.group_ID_out, document=message.document.file_id, visible_file_name=message.document.file_name,
