@@ -1,6 +1,6 @@
-import datetime, os
+import datetime, os, io
 import sqlite3
-import time, os
+import time
 from telebot import types
 from telebot.types import Message
 import telebot
@@ -78,31 +78,43 @@ def check_local_data_base():
 check_local_data_base()
 
 
-@bot.message_handler(func=lambda message: message.chat.id == __Conf.group_ID)
-def any_run(message: Message):
-    print(message.from_user.id, message.text)
-    if message.entities is not None:
-        for entity in message.entities:  # Пройдёмся по всем entities в поисках ссылок
-            if entity.type in ["url", "text_link"]:
-                # Мы можем не проверять chat.id, он проверяется ещё в хэндлере
-                bot.delete_message(message.chat.id, message.message_id)
-                bot.send_message(message.chat.id, 'link запрещены')
+# @bot.message_handler(func=lambda message: message.chat.id == __Conf.group_ID)
+# def any_run(message: Message):
+#     print(message.from_user.id, message.text)
+#     if message.entities is not None:
+#         for entity in message.entities:  # Пройдёмся по всем entities в поисках ссылок
+#             if entity.type in ["url", "text_link"]:
+#                 # Мы можем не проверять chat.id, он проверяется ещё в хэндлере
+#                 bot.delete_message(message.chat.id, message.message_id)
+#                 bot.send_message(message.chat.id, 'link запрещены')
+
+# @bot.message_handler(func=lambda message: message.chat.id == __Conf.group_ID_in)
+# def copy_pdf(message: Message):
+#     print(message.chat.id, message.text)
+#     if message.entities is not None:
+#         for entity in message.entities:  # Пройдёмся по всем entities в поисках ссылок
+#             if entity.type in ["url", "text_link"]:
+#                 # Мы можем не проверять chat.id, он проверяется ещё в хэндлере
+#                 bot.delete_message(message.chat.id, message.message_id)
+#                 bot.send_message(message.chat.id, 'link запрещены')
 
 
 @bot.message_handler(content_types='document')
-def find_doc(message):
-    if message.document.mime_type == 'application/pdf':
-        # print('Doc::', message)
-        print('Doc:->', message.document.file_name)
-        test_dir = os.path.join(os.getcwd(), 'test')
-        # bot.reply_to(message, f'файл {message.document.file_name}-загружен в папку: {test_dir}')
-        # bot.delete_message(message.chat.id, message.message_id)
+def copy_pdf(message: Message):
+    if message.chat.id == __Conf.group_ID_in:
+        print('pdf:->', message)
         file_info = bot.get_file(message.document.file_id)
         file = bot.download_file(file_info.file_path)
+        bot.send_document(__Conf.group_ID_out, document=message.document.file_id, visible_file_name=message.document.file_name,
+                          caption=message.caption)
 
-        with open(f'{os.path.join(test_dir, message.document.file_name)}', 'wb') as file_name:
-            file_name.write(file)
-        print(os.listdir(test_dir))
+
+        # test_dir = os.path.join(os.getcwd(), 'test')
+        # with open(f'{os.path.join(test_dir, message.document.file_name)}', 'wb') as file_name:
+        #         file_name.write(file)
+        #     print(os.listdir(test_dir))
+
+
 
 
 while True:
