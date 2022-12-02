@@ -9,11 +9,12 @@ file_name = ['hass_db', 'hist_data']
 print(today)
 for base_name in file_name:
     command = f'/usr/bin/mysqldump  -uroot -pbananapi {base_name} > {save_dir}/{base_name}-{today}.sql'
+    print(command)
     os.system(command)
 # command1 = '/usr/bin/mysqldump  -uroot -pbananapi hist_data > /mnt/60G/hist_data-' + str(today) + '.sql'
 # os.system(command1)
 
-
+exit()
 file_list = {}
 for item in file_name:
     file_list[item] = [name for name in os.listdir(save_dir) if os.path.isfile(name) and item in name]
