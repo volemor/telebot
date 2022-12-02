@@ -15,7 +15,6 @@ for base_name in file_name:
 # command1 = '/usr/bin/mysqldump  -uroot -pbananapi hist_data > /mnt/60G/hist_data-' + str(today) + '.sql'
 # os.system(command1)
 
-exit()
 file_list = {}
 for item in file_name:
     file_list[item] = [name for name in os.listdir(save_dir) if os.path.isfile(name) and item in name]
