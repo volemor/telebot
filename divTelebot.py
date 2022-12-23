@@ -4,7 +4,10 @@ import pandas as pd
 from datetime import datetime, timedelta
 import telebot
 from tendo import singleton
-import time
+import requests as req
+# from bs4 import BeautifulSoup
+import xml.etree.ElementTree as ET
+import time, shutil
 from divTelebot_config import *  # файл с переменными --secret_token - токен телеграмм бота, my_access_list - список доступа - пока отклбчено
 
 me = singleton.SingleInstance()  ### проверка на работу и запуск альтернативной версии скрипта - чтоб не задвоялас
@@ -19,6 +22,30 @@ bot = telebot.TeleBot(secret_token)
 там где 30% - не учитывается - доплачивать налоги в РФ не нужно, иначе нужно доплатить 3%. 
 
 """
+
+
+def load_usd_curs():
+    '''качаем актуальные курсы'''
+    # TODO: сделать загрузку с сайта цб
+    url_name_2 = f"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=01/01/2022&date_req2={datetime.today().date().strftime('%d/%m/%Y')}&VAL_NM_RQ=R01235"
+    # url_name_2 = f"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=01/01/2022&date_req2=23/12/2022&VAL_NM_RQ=R01235"
+    data_2 = req.post(url=url_name_2, stream=True)
+    # print(data_2.content)
+    with open('usd_r.xml', 'wb') as file:
+        file.write(data_2.content)
+
+    rc_df = pd.DataFrame(columns=['Date', 'Value'])
+    tables = ET.parse('usd_r.xml')
+    for item in tables.findall('Record'):
+        rc_df = pd.concat(
+            [rc_df, pd.DataFrame([[item.attrib['Date'], item.find('Value').text]], columns=['Date', 'Value'])])
+
+    print(rc_df)
+    rc_df.to_excel("RC_2022.xlsx", index=False)
+
+
+load_usd_curs()
+exit()
 
 
 def check_for_access(name):
