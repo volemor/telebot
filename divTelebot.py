@@ -34,11 +34,11 @@ def load_usd_curs():
     with open('usd_r.xml', 'wb') as file:
         file.write(data_2.content)
 
-    rc_df = pd.DataFrame(columns=['Date', 'Value'])
+    rc_df = pd.DataFrame(columns=['data', 'curs'])
     tables = ET.parse('usd_r.xml')
     for item in tables.findall('Record'):
         rc_df = pd.concat(
-            [rc_df, pd.DataFrame([[item.attrib['Date'], item.find('Value').text]], columns=['Date', 'Value'])])
+            [rc_df, pd.DataFrame([[item.attrib['data'], item.find('curs').text]], columns=['data', 'curs'])])
 
     print(rc_df)
     rc_df.to_excel("RC_2022.xlsx", index=False)
