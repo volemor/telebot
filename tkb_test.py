@@ -1,11 +1,15 @@
 import datetime
 import sqlite3
 import time, os
-from telebot import types
+from telebot import types, StateMemoryStorage
 from telebot.types import Message
 import telebot
+from telegram.ext import Dispatcher
+
 from secret_tkb import Conf_tkb as __Conf
+
 # from sqlalchemy import create_engine
+
 
 bot = telebot.TeleBot(__Conf.API_KEY)
 
@@ -67,13 +71,11 @@ def check_local_data_base():
 
 check_local_data_base()
 
+
 def remove_from_bloked_list(user_id: int):
     local_sql = sqlite3.connect(__Conf.db_NAME)
     local_sql.execute(f'delete from BLOKED_USER where user_id="{user_id}";')
     local_sql.commit()
-
-
-
 
 
 def add_user_to_pending_list(user_id: int):
@@ -326,7 +328,7 @@ def user(message: Message):
                         mess_loc_s += f'  id:{item[1]} activ:{x}\n'
                         count_s += 1
                     if 'root' == item[2]:
-                        count_r +=1
+                        count_r += 1
                         if item[3]:
                             x = True
                         else:
