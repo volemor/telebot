@@ -4,7 +4,7 @@ import time, os
 from telebot import types
 from telebot.types import Message
 import telebot
-from secret_for_menu import API_KEY, my_access_list, subscriber_list, sql_login
+from secret_for_menu import API_KEY, my_access_list, subscriber_list, sql_login, config
 import pandas as pd
 from sqlalchemy import create_engine
 # import asyncio
@@ -133,8 +133,8 @@ def start(message: Message):
             markup = types.ReplyKeyboardMarkup(row_width=2)
             itembtna = types.KeyboardButton('/user')
             itembtnv = types.KeyboardButton('/pending_user')
-            itembtnc = types.KeyboardButton('/tiker_report_status')
-            itembtnd = types.KeyboardButton('/sendmefile')
+            itembtnc = types.KeyboardButton('/tiker_report_status\nстатус базы')
+            itembtnd = types.KeyboardButton('/sendmefile \nполучение файла')
             itembtnf = types.KeyboardButton('/log')
             itembtne = types.KeyboardButton('/start')
             markup.row(itembtna, itembtnv)
@@ -145,8 +145,8 @@ def start(message: Message):
         else:
             markup = types.ReplyKeyboardMarkup(row_width=2)
             itembtna = types.KeyboardButton('/user_info')
-            itembtnb = types.KeyboardButton('/sendmefile')
-            itembtnc = types.KeyboardButton('/tiker_report_status')
+            itembtnb = types.KeyboardButton('/sendmefile\nполучение файла')
+            itembtnc = types.KeyboardButton('/tiker_report_status\nстатус базы')
             itembtne = types.KeyboardButton('/start')
             markup.row(itembtna, itembtnb, itembtnc)
             markup.row(itembtne)
@@ -261,7 +261,8 @@ def tiker_report_status(message: Message):
 @bot.message_handler(commands=['sendmefile'])
 def sendmefile(message: Message):
     '''send any file'''
-    path_for_telebot = '/mnt/1T/opt/gig/My_Python/st_US/otchet/'
+
+    path_for_telebot = config.path_for_telebot
 
     def sendmefile_log(id: int, name: str):
         with open('sendmefile.log', 'a') as file:
@@ -547,7 +548,7 @@ def log_status(message: Message):
         if len(spl) > 1:
             if 'update' in spl[1]:
                 try:
-                    mess = os.popen('tail -19 /root/update-sql.log').read()
+                    mess = os.popen(config.run_com_log_update).read()
                     if len(mess) > 4000:
                         mess = mess[-2000:]
                     bot.send_message(message.from_user.id, mess)
@@ -557,7 +558,7 @@ def log_status(message: Message):
 
             elif 'calc' in spl[1]:
                 try:
-                    mess = os.popen('tail -19 /root/my_py/stock_rep_calc/log/make_from_sql.log').read()
+                    mess = os.popen(config.run_com_log_calc).read()
                     if len(mess) > 4000:
                         mess = mess[-2000:]
                     bot.send_message(message.from_user.id, mess)
@@ -565,7 +566,7 @@ def log_status(message: Message):
                     bot.send_message(message.from_user.id, 'File not found')
             elif 'sendmefile' in spl[1]:
                 try:
-                    mess = os.popen('tail -7 /root/my_py/telebot/ban_monitor/sendmefile.log').read()
+                    mess = os.popen(config.run_com_log_sendfile).read()
                     if len(mess) > 4000:
                         mess = mess[-2000:]
 
@@ -584,7 +585,7 @@ def any_run(message: Message):
         split_message = message.text.split()
         if len(split_message)>1:
             if 'pull' in split_message[1].lower():
-                mess_loc = os.popen('cd /root/my_py/telebot/telebot && git pull').read()
+                mess_loc = os.popen(config.run_comm_pull).read()
                 if len(mess_loc) > 0:
                     bot.send_message(message.from_user.id, mess_loc.split('\n'))
             elif 'pass' in split_message[1].lower():

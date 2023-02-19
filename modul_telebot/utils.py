@@ -28,8 +28,8 @@ def check_for_access(message: Message):
         __Conf.my_access_set.add(int(__Conf.my_access_list[0]))
         local_sql = sqlite3.connect(__Conf.db_NAME)
         root_in_sql = set(local_sql.execute(
-                'select user_id from USER where user_group = "root" and user_activation="1";').fetchall())
-        print('root_in_sql',root_in_sql)
+            'select user_id from USER where user_group = "root" and user_activation="1";').fetchall())
+        print('root_in_sql', root_in_sql)
         if __Conf.my_access_list[0] not in root_in_sql:
             local_sql.execute(
                 f'INSERT INTO USER (user_id, user_group,user_activation ) values("{__Conf.my_access_list[0]}", "root", "1");')
