@@ -134,7 +134,7 @@ def start(message: Message):
             itembtna = types.KeyboardButton('/user')
             itembtnv = types.KeyboardButton('/pending_user')
             itembtnc = types.KeyboardButton('/tiker_report_status\nстатус базы')
-            itembtnd = types.KeyboardButton('/sendmefile \nполучение файла')
+            itembtnd = types.KeyboardButton('/sendmefile')
             itembtnf = types.KeyboardButton('/log')
             itembtne = types.KeyboardButton('/start')
             markup.row(itembtna, itembtnv)
@@ -145,7 +145,7 @@ def start(message: Message):
         else:
             markup = types.ReplyKeyboardMarkup(row_width=2)
             itembtna = types.KeyboardButton('/user_info')
-            itembtnb = types.KeyboardButton('/sendmefile\nполучение файла')
+            itembtnb = types.KeyboardButton('/sendmefile')
             itembtnc = types.KeyboardButton('/tiker_report_status\nстатус базы')
             itembtne = types.KeyboardButton('/start')
             markup.row(itembtna, itembtnb, itembtnc)
