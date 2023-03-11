@@ -27,25 +27,25 @@ bot = telebot.TeleBot(secret_token)
 def load_usd_curs():
     '''качаем актуальные курсы'''
     # TODO: сделать загрузку с сайта цб
-    url_name_2 = f"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=01/01/2022&date_req2={datetime.today().date().strftime('%d/%m/%Y')}&VAL_NM_RQ=R01235"
+    url_name_2 = f"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=01/12/2021&date_req2={datetime.today().date().strftime('%d/%m/%Y')}&VAL_NM_RQ=R01235"
     # url_name_2 = f"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=01/01/2022&date_req2=23/12/2022&VAL_NM_RQ=R01235"
     data_2 = req.post(url=url_name_2, stream=True)
-    # print(data_2.content)
+    print(data_2.content)
     with open('usd_r.xml', 'wb') as file:
         file.write(data_2.content)
 
     rc_df = pd.DataFrame(columns=['data', 'curs'])
     tables = ET.parse('usd_r.xml')
     for item in tables.findall('Record'):
-        rc_df = pd.concat(
-            [rc_df, pd.DataFrame([[item.attrib['data'], item.find('curs').text]], columns=['data', 'curs'])])
+        print(item.attrib['Date'], item.find('Value').text)
+        rc_df = pd.concat([rc_df, pd.DataFrame([[item.attrib['Date'], item.find('Value').text]], columns=['data', 'curs'])])
 
     print(rc_df)
-    rc_df.to_excel("RC_2022.xlsx", index=False)
+    rc_df.to_excel("RC.xlsx", index=False, sheet_name='RC')
 
 
 load_usd_curs()
-exit()
+# exit()
 
 
 def check_for_access(name):
@@ -62,6 +62,7 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
         cb_df = pd.read_excel(f'{proj_path}RC.xlsx', sheet_name='RC',
                               engine='openpyxl')  # курсы валют по ЦБ за нужный год
     except Exception as _ex:
+        load_usd_curs()
         save_exeption(_ex)
 
     my_list = []
