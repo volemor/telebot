@@ -30,17 +30,17 @@ def load_usd_curs():
     url_name_2 = f"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=01/12/2021&date_req2={datetime.today().date().strftime('%d/%m/%Y')}&VAL_NM_RQ=R01235"
     # url_name_2 = f"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=01/01/2022&date_req2=23/12/2022&VAL_NM_RQ=R01235"
     data_2 = req.post(url=url_name_2, stream=True)
-    print(data_2.content)
+    # print(data_2.content)
     with open('usd_r.xml', 'wb') as file:
         file.write(data_2.content)
 
     rc_df = pd.DataFrame(columns=['data', 'curs'])
     tables = ET.parse('usd_r.xml')
     for item in tables.findall('Record'):
-        print(item.attrib['Date'], item.find('Value').text)
+        # print(item.attrib['Date'], item.find('Value').text)
         rc_df = pd.concat([rc_df, pd.DataFrame([[item.attrib['Date'], item.find('Value').text]], columns=['data', 'curs'])])
 
-    print(rc_df)
+    # print(rc_df)
     rc_df.to_excel("RC.xlsx", index=False, sheet_name='RC')
 
 
