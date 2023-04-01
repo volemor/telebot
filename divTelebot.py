@@ -82,8 +82,10 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
         return df
 
     pages = pdf.pages
+    print('Pages::',pages)
     if 'ООО "Компании БКС"' in pdf.pages[0].extract_text():
         cb_df = make_lost_data(cb_df)
+        print('cb_df::',cb_df)
         cb_df.set_index(['data'], inplace=True)
         name_comp_list = []
         if message != False:
