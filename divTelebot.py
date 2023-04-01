@@ -111,7 +111,7 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
     my_dict = {}
     for index, key, comp_loc_name in zip(range(0, len(my_list), 4), range(len(my_list) // 4), name_comp_list):
         my_dict[key] = [my_list[index], my_list[index + 1], my_list[index + 2], my_list[index + 3]]
-        # print(my_dict[key]) пока отключили
+        print(my_dict[key]) #пока отключили
     new_name_comp_list = []
     for ind in name_comp_list:
         my_loc = ''
@@ -164,6 +164,7 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
         cumm_div_for_mess += f'{key_m} {round(stik_div_summ[key_m], 2)}$ \n'
     if message != False:
         bot.send_message(message.chat.id, f"Суммарно полученные дивиденды по тикерам \n {cumm_div_for_mess}")
+    print('df_div_calc_tax::',df_div_calc_tax)
     return df_div_calc_tax
 
 
