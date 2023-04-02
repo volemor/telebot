@@ -61,31 +61,40 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
     try:
         cb_df = pd.read_excel(f'{proj_path}RC.xlsx', sheet_name='RC',
                               engine='openpyxl')  # курсы валют по ЦБ за нужный год
+        print(cb_df)
     except Exception as _ex:
+        print('[error]:', _ex)
         load_usd_curs()
         save_exeption(_ex)
 
     my_list = []
 
     def make_lost_data(df):  # дополняем список курсов $ пропущенными данными с учетом выходных
-        day_start = datetime(datetime.today().year - 1, 1, 1)
+        day_start = datetime(datetime.today().year - 2, 12, 1)
+        # print(day_start, df.columns, df)
         local_day = day_start
-        curss = df[df['data'] == local_day]['curs'].values
-
+        curss = df.loc[0]['curs']
         while local_day != datetime(datetime.today().year, 1, 1):
-            if len(df[df['data'] == local_day]['curs'].values) == 1:
-                filter = df['data'] == local_day
+            if len(df[df['data'] == local_day.strftime('%d.%m.%Y')]['curs'].values) == 1:
+                filter = df['data'] == local_day.strftime('%d.%m.%Y')
                 curss = df[filter]['curs'].values[0]
+                # print(curss, local_day.strftime('%d.%m.%Y'))
             else:
-                df.loc[len(df.index)] = [1, local_day, curss, 'tnew']
+                df.loc[len(df.index)] = [local_day.date().strftime('%d.%m.%Y'), curss]
+                # df.loc[len(df.index)] = [1, local_day, curss, 'tnew']
             local_day += timedelta(days=1)
+            # print(local_day)
+        df['data'] = pd.to_datetime(df['data'], format='%d.%m.%Y')
+        df.sort_values(by=['data'], inplace=True)
         return df
 
     pages = pdf.pages
-    print('Pages::',pages)
-    if 'ООО "Компании БКС"' in pdf.pages[0].extract_text():
+    # print('Pages::',pages)
+    # print(pdf.pages[0].extract_text())
+    if 'Компании БКС' in pdf.pages[0].extract_text():
+        # print('________________________ start')
         cb_df = make_lost_data(cb_df)
-        print('cb_df::',cb_df)
+        # print('cb_df::',cb_df)
         cb_df.set_index(['data'], inplace=True)
         name_comp_list = []
         if message != False:
@@ -107,6 +116,7 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
                         if 'Оплата дивидендов,' in line or 'Погашение купона,' in line:
                             name_comp_list.append(local_ll[4:])
     else:
+        bot.send_message(message.chat.id, 'Не та кодировка PDF - не формат БКС, загрузите верный файл')
         if message != False:
             bot.send_message(message.chat.id, 'Не та кодировка PDF - не формат БКС, загрузите верный файл')
         return False
@@ -128,7 +138,7 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
         if my_dict.get(key)[-1] != '13':
             if my_dict.get(key)[-1] == '10':
                 date_ii = pd.to_datetime(my_dict.get(key)[1])
-                cur_curs = cb_df[cb_df.index == date_ii]['curs'].values[0]
+                cur_curs = float(cb_df[cb_df.index == date_ii]['curs'].values[0].replace(',', '.'))
                 if ',' in my_dict.get(key)[2]:
                     value_loc = float(my_dict.get(key)[2].replace(',', '.'))
                     summa_n += value_loc
@@ -138,8 +148,8 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
                     summa_n += value_loc
                     summa_r += value_loc * cur_curs
                 df_div_calc_tax.loc[len(df_div_calc_tax.index)] = [new_name_comp_list[num], date_ii, value_loc,
-                                                                   cur_curs, (value_loc * cur_curs).round(2),
-                                                                   (value_loc * cur_curs * 0.03).round(2)]
+                                                                   cur_curs, round(value_loc * cur_curs,2),
+                                                                   round(value_loc * cur_curs * 0.03,2)]
             if my_dict.get(key)[-1] == '30':
                 date_ii = pd.to_datetime(my_dict.get(key)[1])
                 cur_curs = cb_df[cb_df.index == date_ii]['curs'].values[0]
@@ -152,8 +162,8 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
                     summa_n += value_loc  #########
                     summa_r += value_loc * cur_curs
                 df_div_calc_tax.loc[len(df_div_calc_tax.index)] = [new_name_comp_list[num], date_ii, value_loc,
-                                                                   cur_curs, (value_loc * cur_curs).round(2),
-                                                                   (value_loc * cur_curs * 0.0).round(2)]
+                                                                   cur_curs, round(value_loc * cur_curs,2),
+                                                                   round(value_loc * cur_curs * 0.0,2)]
     stik_div_summ = {}  # суммируем для каждого тикера полученные дивиденды
     for name in df_div_calc_tax.index:
         if df_div_calc_tax.at[name, 'name'] not in stik_div_summ:
@@ -210,8 +220,10 @@ def start(message):
 
 
 while True:
-    try:
-        bot.polling(none_stop=True)
-    except Exception as _ex:
-        save_exeption(_ex)
-    time.sleep(25)
+    # try:
+    print('start BOT')
+    bot.polling(none_stop=True)
+    # except Exception as _ex:
+    #     print('[errror]:::',_ex)
+    #     save_exeption(_ex)
+    # time.sleep(25)
