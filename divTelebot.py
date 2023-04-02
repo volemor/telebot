@@ -38,13 +38,16 @@ def load_usd_curs():
     tables = ET.parse('usd_r.xml')
     for item in tables.findall('Record'):
         # print(item.attrib['Date'], item.find('Value').text)
-        rc_df = pd.concat([rc_df, pd.DataFrame([[item.attrib['Date'], item.find('Value').text]], columns=['data', 'curs'])])
+        rc_df = pd.concat(
+            [rc_df, pd.DataFrame([[item.attrib['Date'], item.find('Value').text]], columns=['data', 'curs'])])
 
     # print(rc_df)
     rc_df.to_excel("RC.xlsx", index=False, sheet_name='RC')
 
 
 load_usd_curs()
+
+
 # exit()
 
 
@@ -123,7 +126,7 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
     my_dict = {}
     for index, key, comp_loc_name in zip(range(0, len(my_list), 4), range(len(my_list) // 4), name_comp_list):
         my_dict[key] = [my_list[index], my_list[index + 1], my_list[index + 2], my_list[index + 3]]
-        print(my_dict[key]) #пока отключили
+        print(my_dict[key])  # пока отключили
     new_name_comp_list = []
     for ind in name_comp_list:
         my_loc = ''
@@ -148,11 +151,11 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
                     summa_n += value_loc
                     summa_r += value_loc * cur_curs
                 df_div_calc_tax.loc[len(df_div_calc_tax.index)] = [new_name_comp_list[num], date_ii, value_loc,
-                                                                   cur_curs, round(value_loc * cur_curs,2),
-                                                                   round(value_loc * cur_curs * 0.03,2)]
+                                                                   cur_curs, round(value_loc * cur_curs, 2),
+                                                                   round(value_loc * cur_curs * 0.03, 2)]
             if my_dict.get(key)[-1] == '30':
                 date_ii = pd.to_datetime(my_dict.get(key)[1])
-                cur_curs = cb_df[cb_df.index == date_ii]['curs'].values[0]
+                cur_curs = float(cb_df[cb_df.index == date_ii]['curs'].values[0].replace(',', '.'))
                 if ',' in my_dict.get(key)[2]:
                     value_loc = float(my_dict.get(key)[2].replace(',', '.'))
                     summa_n += value_loc
@@ -162,8 +165,8 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
                     summa_n += value_loc  #########
                     summa_r += value_loc * cur_curs
                 df_div_calc_tax.loc[len(df_div_calc_tax.index)] = [new_name_comp_list[num], date_ii, value_loc,
-                                                                   cur_curs, round(value_loc * cur_curs,2),
-                                                                   round(value_loc * cur_curs * 0.0,2)]
+                                                                   cur_curs, round(value_loc * cur_curs, 2),
+                                                                   round(value_loc * cur_curs * 0.0, 2)]
     stik_div_summ = {}  # суммируем для каждого тикера полученные дивиденды
     for name in df_div_calc_tax.index:
         if df_div_calc_tax.at[name, 'name'] not in stik_div_summ:
@@ -176,7 +179,7 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
         cumm_div_for_mess += f'{key_m} {round(stik_div_summ[key_m], 2)}$ \n'
     if message != False:
         bot.send_message(message.chat.id, f"Суммарно полученные дивиденды по тикерам \n {cumm_div_for_mess}")
-    print('df_div_calc_tax::',df_div_calc_tax)
+    print('df_div_calc_tax::', df_div_calc_tax)
     return df_div_calc_tax
 
 
@@ -224,6 +227,6 @@ while True:
         print('start BOT')
         bot.polling(none_stop=True)
     except Exception as _ex:
-        print('[errror]:::',_ex)
+        print('[errror]:::', _ex)
         save_exeption(_ex)
     time.sleep(25)
