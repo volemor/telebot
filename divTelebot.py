@@ -205,7 +205,7 @@ def check_doc_type(message):
             df_div_calc_tax.to_excel(file_streem)
             file_streem.name = 'отчет по дивидендам.xlsx'
             bot.send_message(message.chat.id,
-                             f"по этому отчету надо заплатить {round(df_div_calc_tax['tax 3% (rub)'].sum(), 2)} рублей налогов")
+                             f"по этому отчету до 30 апреля надо подать сведения в налоговую\nи до 30 июня заплатить {round(df_div_calc_tax['tax 3% (rub)'].sum(), 2)} рублей налогов")
             bot.send_document(message.from_user.id, document=file_streem.getvalue(),
                               visible_file_name='отчет по дивидендам.xlsx', caption='отчет по дивидендам.xlsx')
 
