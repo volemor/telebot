@@ -220,10 +220,10 @@ def start(message):
 
 
 while True:
-    # try:
-    print('start BOT')
-    bot.polling(none_stop=True)
-    # except Exception as _ex:
-    #     print('[errror]:::',_ex)
-    #     save_exeption(_ex)
-    # time.sleep(25)
+    try:
+        print('start BOT')
+        bot.polling(none_stop=True)
+    except Exception as _ex:
+        print('[errror]:::',_ex)
+        save_exeption(_ex)
+    time.sleep(25)
