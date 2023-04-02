@@ -182,7 +182,7 @@ def pdf_calc(pdf_io, message=False):  # False -  на случай если вы
 
 def save_exeption(_ex):
     with open(proj_path + 'div_telebot_ex.log', 'a') as file:
-        file.writelines(str(_ex) + '\n')
+        file.writelines(f'[{datetime.now()}]:' + str(_ex) + '\n')
 
 
 def save_user_info(message):
