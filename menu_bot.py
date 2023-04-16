@@ -588,9 +588,10 @@ def any_run(message: Message):
                 mess_loc = os.popen(config.run_comm_pull).read()
                 if len(mess_loc) > 0:
                     bot.send_message(message.from_user.id, mess_loc.split('\n'))
-            elif 'pass' in split_message[1].lower():
-                pass
-
+            elif 'uptime' in split_message[1].lower():
+                mess_loc = os.popen('uptime').read()
+                if len(mess_loc) > 0:
+                    bot.send_message(message.from_user.id, mess_loc.split('\n'))
 
 while True:
     try:
