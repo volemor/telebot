@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import os
 from datetime import datetime
+from secret_pass import Config
 
 today = datetime.today().date()
 save_dir = '/opt/backup'
@@ -9,7 +10,8 @@ file_name = ['hass_db', 'hist_data']
 print(today)
 for base_name in file_name:
     # command = f"/usr/bin/mysqldump -uroot -pban {base_name} > {save_dir}/{base_name}-{today}.sql"
-    command = '/usr/bin/mysqldump ' + str(base_name) + f'> {save_dir}/' + str(base_name) + '-' + str(
+    command = '/usr/bin/mysqldump ' + str(base_name) + f'-u{Config.user} -p{Config.password}' + f'> {save_dir}/' + str(
+        base_name) + '-' + str(
         today) + '.sql'
     print(command)
     os.system(command)
