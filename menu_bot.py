@@ -93,10 +93,8 @@ def check_for_access(message: Message):
             my_access_set.add(item[0])
         print('my A _set::', my_access_set)
 
-    if message.from_user.id in my_access_set:
-        return True
-    else:
-        return False
+    return message.from_user.id in my_access_set
+
 
 
 def check_for_subscribers(user_id: int):
@@ -107,10 +105,10 @@ def check_for_subscribers(user_id: int):
         #
         # print('sub_SET:::',subscriber_set_db)
         subscriber_set_db.add(int(my_access_list[0]))
-    if user_id in subscriber_set_db:
-        return True
-    else:
-        return False
+    return user_id in subscriber_set_db
+    #     return True
+    # else:
+    #     return False
 
 
 @bot.message_handler(commands=['restart'])
