@@ -10,6 +10,6 @@ secret_tkb.py
 secret_cheker.py
 /test
 secret*
-RC.xlsx
+RC.*
 /div_tester.py
 /src_for_rimm/secret_pass.py
