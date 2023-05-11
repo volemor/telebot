@@ -9,6 +9,11 @@ import pandas as pd
 from sqlalchemy import create_engine
 # import asyncio
 
+
+# config.run_comm_upgrade = ''
+
+
+
 db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
 
 db_NAME = 'local_sql__menu_bot.db'
@@ -583,7 +588,12 @@ def any_run(message: Message):
         split_message = message.text.split()
         if len(split_message)>1:
             if 'pull' in split_message[1].lower():
-                mess_loc = os.popen(config.run_comm_pull).read()
+                mess_loc = os.popen(config.run_com_pull).read()
+                if len(mess_loc) > 0:
+                    bot.send_message(message.from_user.id, mess_loc.split('\n'))
+            if "apt upgrade" in message.text.lower():
+                os.popen(config.run_com_sudo)
+                mess_loc = os.popen(config.run_com_sys_upgrade).read()
                 if len(mess_loc) > 0:
                     bot.send_message(message.from_user.id, mess_loc.split('\n'))
             elif 'uptime' in split_message[1].lower():

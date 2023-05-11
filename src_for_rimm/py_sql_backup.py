@@ -9,14 +9,12 @@ file_name = ['hass_db', 'hist_data']
 
 print(today)
 for base_name in file_name:
-    # command = f"/usr/bin/mysqldump -uroot -pban {base_name} > {save_dir}/{base_name}-{today}.sql"
     command = '/usr/bin/mysqldump ' + str(base_name) + f' -u{Config.user} -p{Config.password} ' + f'> {save_dir}/' + str(
         base_name) + '-' + str(
         today) + '.sql'
     print(command)
     os.system(command)
-# command1 = '/usr/bin/mysqldump  -uroot -pgfhrx35f4h45aK#jv hist_data > /mnt/60G/hist_data-' + str(today) + '.sql'
-# os.system(command1)
+
 
 file_list = {}
 for item in file_name:
