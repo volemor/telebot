@@ -311,8 +311,9 @@ def sendmefile(message: Message):
                 otchet_teh.sort()
 
                 def file_list_len_control(file_list: list):
-                    if len(file_list) > 10:
-                        del_item = [item for item in file_list[:-10]]
+                    file_list_len = 5
+                    if len(file_list) > file_list_len:
+                        del_item = [item for item in file_list[:-file_list_len]]
                         for item in del_item:
                             print(item)
                             os.remove(path_for_telebot + item)
