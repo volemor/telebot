@@ -11,5 +11,6 @@ secret_cheker.py
 /test
 secret*
 RC.*
+RC.xlsx
 /div_tester.py
 /src_for_rimm/secret_pass.py
