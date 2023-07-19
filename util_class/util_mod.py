@@ -29,17 +29,20 @@ class User_Db():
 
     def useradd(self, user_id: int, user_role: str):
         # user_role :: admin, user
-        import sqlite3, datetime
-        local_sql = sqlite3.connect(self.db_file_name)
-        if local_sql.execute('select user_id from USER;').fetchall().count((user_id,)) == 0:
-            sql = 'INSERT INTO USER (user_id, user_group,user_activation, user_last_date_act) values( ?, ?, ?, ?)'
-            data = [(user_id, user_role, 1, datetime.datetime.now().date() + datetime.timedelta(days=3650))]
-            local_sql.executemany(sql, data)
-            local_sql.commit()
-            print(f'user_add:mess::{user_id} added')
-            return True
+        if user_role.lower() in ['admin', 'user']:
+            local_sql = sqlite3.connect(self.db_file_name)
+            if local_sql.execute('select user_id from USER;').fetchall().count((user_id,)) == 0:
+                sql = 'INSERT INTO USER (user_id, user_group,user_activation, user_last_date_act) values( ?, ?, ?, ?)'
+                data = [(user_id, user_role, 1, datetime.datetime.now().date() + datetime.timedelta(days=3650))]
+                local_sql.executemany(sql, data)
+                local_sql.commit()
+                print(f'user_add:mess::{user_id} added')
+                return True
+            else:
+                print(f'user_add:mess: user {user_id} allready add')
+                return False
         else:
-            print(f'user_add:mess: user {user_id} allready add')
+            print(f'user_add:mess: user {user_id} error role [{user_role}]')
             return False
 
     def user_list(self):
@@ -48,7 +51,7 @@ class User_Db():
         user_list_loc = [item[0] for item in local_sql.execute('select user_id from USER;').fetchall()]
         print(f'{self.db_file_name} len user_list:mess:{len(user_list_loc)}')
         for item in user_list_loc:
-            print('  :user_id:', item)
+            print('-->:user_id:', item)
         return user_list_loc
 
     def user_del(self, user_id: int):
@@ -77,13 +80,17 @@ class User_Db():
 
     def user_ch_role(self, user_id: int, new_role: str):
         """изменение роли пользователя admin, user"""
-        local_sql = sqlite3.connect(self.db_file_name)
-        if user_id in [item[0] for item in local_sql.execute('select user_id from USER;').fetchall()]:
-            print(f'TRY DEL {user_id}')
-            local_sql.execute(f'update USER SET user_group = "{new_role}" where user_id = "{user_id}";')
-            local_sql.commit()
-            print(local_sql.execute('select * from USER;').fetchall())
-            return True
+        if new_role.lower() in ['admin', 'user']:
+            local_sql = sqlite3.connect(self.db_file_name)
+            if user_id in [item[0] for item in local_sql.execute('select user_id from USER;').fetchall()]:
+                print(f'TRY DEL {user_id}')
+                local_sql.execute(f'update USER SET user_group = "{new_role}" where user_id = "{user_id}";')
+                local_sql.commit()
+                print(local_sql.execute('select * from USER;').fetchall())
+                return True
+        else:
+            print(f'user_add:mess: user {user_id} error role [{new_role}]')
+            return False
 
     def ch_user_date_activation(self, user_id: int, new_date: str):
         """изменение даты активации пользователя """
