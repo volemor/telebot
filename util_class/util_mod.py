@@ -6,7 +6,7 @@ class User_Db():
     отбражение списка, статуса, проверка вхождения в группы - admin, user, очистка базы данных
     """
 
-    def __init__(self, db_file_name: str, db_table_name: str = None):
+    def __init__(self, db_file_name: str, db_table_name: str = "USER"):
         self.db_file_name = db_file_name + ".db"
         # self.table_name = db_table_name.upper()
         import sqlite3
@@ -86,14 +86,13 @@ class User_Db():
             return True
 
     def ch_user_date_activation(self, user_id: int, new_date: str):
+        """изменение даты активации пользователя """
         try:
             date_loc = datetime.datetime.strptime(new_date, "%Y-%m-%d").date()
         except Exception as _ex:
             print('__SOME ERROR DATE:', _ex)
             return False
-        """изменение даты активации пользователя """
         if self.user_chk(user_id):
-            # @TODO: add function
             local_sql = sqlite3.connect(self.db_file_name)
             # print('Old date::', local_sql.execute(f'select user_last_date_act from USER where user_id ="{user_id}" ;').fetchall()[0][0])
             print(f'TRY SET new date for {user_id}={date_loc}')
