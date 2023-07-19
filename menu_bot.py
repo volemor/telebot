@@ -7,11 +7,11 @@ import telebot
 from secret_for_menu import API_KEY, my_access_list, subscriber_list, sql_login, config
 import pandas as pd
 from sqlalchemy import create_engine
+
 # import asyncio
 
 
 # config.run_comm_upgrade = ''
-
 
 
 db_connection = create_engine(sql_login, connect_args={'connect_timeout': 10})
@@ -101,7 +101,6 @@ def check_for_access(message: Message):
     return message.from_user.id in my_access_set
 
 
-
 def check_for_subscribers(user_id: int):
     global subscriber_set_db
     if len(subscriber_set_db) == 0:
@@ -120,7 +119,7 @@ def check_for_subscribers(user_id: int):
 def restart(message: Message):
     if check_for_access(message):
         spl = message.text.split()
-        if len(spl)>1:
+        if len(spl) > 1:
             if spl[1] == 'USER':
                 local_sql = sqlite3.connect(db_NAME)
                 local_sql.execute('drop table USER;').fetchall()
@@ -468,7 +467,7 @@ def user(message: Message):
                         mess_loc_s += f'  id:{item[1]} activ:{x}\n'
                         count_s += 1
                     if 'root' == item[2]:
-                        count_r +=1
+                        count_r += 1
                         if item[3]:
                             x = True
                         else:
@@ -587,7 +586,7 @@ def log_status(message: Message):
 def any_run(message: Message):
     if check_for_access(message):
         split_message = message.text.split()
-        if len(split_message)>1:
+        if len(split_message) > 1:
             if 'pull' in split_message[1].lower():
                 mess_loc = os.popen(config.run_com_pull).read()
                 if len(mess_loc) > 0:
@@ -601,6 +600,7 @@ def any_run(message: Message):
                 mess_loc = os.popen('uptime').read()
                 if len(mess_loc) > 0:
                     bot.send_message(message.from_user.id, mess_loc.split('\n'))
+
 
 while True:
     try:
