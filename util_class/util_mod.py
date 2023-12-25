@@ -9,12 +9,11 @@ class User_Db():
     def __init__(self, db_file_name: str, db_table_name: str = "USER"):
         self.db_file_name = db_file_name + ".db"
         # self.table_name = db_table_name.upper()
-        import sqlite3
-        local_sql = sqlite3.connect(self.db_file_name)
-        tab_name = {j for i in local_sql.execute("select name from sqlite_master where type = 'table';").fetchall() for
+        self.con = sqlite3.connect(self.db_file_name)
+        tab_name = {j for i in self.con.execute("select name from sqlite_master where type = 'table';").fetchall() for
                     j in i}
         if "USER" not in tab_name:
-            local_sql.execute("""
+            self.con.execute("""
                 CREATE TABLE USER (
                     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER,
@@ -24,7 +23,7 @@ class User_Db():
                 );
             """)
         else:
-            mess_add = local_sql.execute('select * from USER;').fetchall()
+            mess_add = self.con.execute('select * from USER;').fetchall()
             print(f'init else:[{self.db_file_name}]:', mess_add)
 
     def useradd(self, user_id: int, user_role: str):
@@ -135,7 +134,7 @@ class User_Db():
 def Test_User_Db():
     any = User_Db('aNy')
     any.useradd(12884, 'admin')
-    # any.ch_user_date_activation(12884,'2099-1-9')
+    any.ch_user_date_activation(12884,'2099-1-9')
     # any.user_list()
     # any.user_del(1212)
     # any.user_list()

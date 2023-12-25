@@ -219,7 +219,7 @@ def check_doc_type(message):
 @bot.message_handler(commands=['start'])
 def start(message):
     bot.send_message(message.chat.id,
-                     "Бот расчета оплаты налогов в РФ по дивидендам иностранных компаний, по отчетам БКС (за 2021 год). \n Загрузите pdf файл 'VyplataDohoda ........pdf'  ")
+                     "Бот расчета оплаты налогов в РФ по дивидендам иностранных компаний, по отчетам БКС (за 202_ год). \n Загрузите pdf файл 'VyplataDohoda ........pdf'  ")
 
 
 while True:
