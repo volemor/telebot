@@ -553,7 +553,7 @@ def log_status(message: Message):
                 try:
                     mess = os.popen(config.run_com_log_update).read()
                     if len(mess) > 4000:
-                        mess = mess[-2000:]
+                        mess = mess[-2500:]
                     bot.send_message(message.from_user.id, mess)
                 except FileExistsError:
                     bot.send_message(message.from_user.id, 'File not found')
@@ -563,7 +563,7 @@ def log_status(message: Message):
                 try:
                     mess = os.popen(config.run_com_log_calc).read()
                     if len(mess) > 4000:
-                        mess = mess[-2000:]
+                        mess = mess[-2500:]
                     bot.send_message(message.from_user.id, mess)
                 except FileExistsError:
                     bot.send_message(message.from_user.id, 'File not found')
@@ -571,7 +571,7 @@ def log_status(message: Message):
                 try:
                     mess = os.popen(config.run_com_log_sendfile).read()
                     if len(mess) > 4000:
-                        mess = mess[-2000:]
+                        mess = mess[-2500:]
 
                     bot.send_message(message.from_user.id, mess)
                 except FileExistsError:
@@ -600,6 +600,7 @@ def any_run(message: Message):
                 mess_loc = os.popen('uptime').read()
                 if len(mess_loc) > 0:
                     bot.send_message(message.from_user.id, mess_loc.split('\n'))
+
 
 
 while True:
