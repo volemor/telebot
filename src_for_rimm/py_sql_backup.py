@@ -20,7 +20,7 @@ def make_backup():
 def clean_dir():
     file_list = {}
     for item in file_name:
-        file_list[item] = [name for name in os.listdir(save_dir) if os.path.isfile(name) and item in name]
+        file_list[item] = [name for name in os.listdir(save_dir) if item in name]
     print(file_list)
     for item in file_name:
         if len(file_list[item]) > 4:
