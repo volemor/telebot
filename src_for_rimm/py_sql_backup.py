@@ -23,8 +23,8 @@ def clean_dir():
         file_list[item] = sorted([name for name in os.listdir(save_dir) if item in name])
     print(file_list)
     for item in file_name:
-        if len(file_list[item]) > 4:
-            for del_name in file_list[item][:-4]:
+        if len(file_list[item]) > 8:
+            for del_name in file_list[item][:-6]:
                 os.remove(os.path.join(save_dir, del_name))
 
 
