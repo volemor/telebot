@@ -22,7 +22,7 @@ def make_backup():
 
 def save_log(message: str):
     with open('sql_backup.log', 'a') as file:
-        mes_loc = f"[{datetime.today()}] {message}"
+        mes_loc = f"[{datetime.today()}] {message}\n"
         file.writelines(mes_loc)
 
 
